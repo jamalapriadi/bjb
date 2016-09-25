@@ -1,5 +1,9 @@
 angular.module('bjbController',[])
 
+.controller('kanpus',function($scope,$timeout){
+    
+})
+
 .controller('kanwil',function($scope,$timeout,Kanwil){
 	$scope.hasils=[];
 	$scope.form_title="";
@@ -285,14 +289,14 @@ angular.module('bjbController',[])
         switch(modalstate){
             case "tambah":
                 $scope.form_title="Tambah KCP";
-                $scope.newForm={cabang:'',nama:'',alamat:'',telp:'',username:'',password:''}
+                $scope.newForm={cabang:'',nama:'',alamat:'',telp:'',fax:'',username:'',password:''}
 
                 break;
             case "edit":
                 $scope.form_title="Update KCP";
-                Cabang.getById(id)
+                Kcp.getById(id)
                     .success(function(data){
-                        $scope.newForm={'nama':data.cabang.nama_cabang,'kanwil':data.cabang.id_kanwil};
+                        $scope.newForm={cabang:data.id_cabang,nama:data.nama_kcp,alamat:data.alamat_kcp,telp:data.telp_kcp,fax:data.fax_kcp,username:data.username,password:data.password};
                     })
                 break;
             default:
@@ -307,7 +311,7 @@ angular.module('bjbController',[])
         switch(modalstate){
             case "tambah":
                 $scope.loading=true;
-                Cabang.save(this.newForm)
+                Kcp.save(this.newForm)
                     .success(function(data){
                         $("#myModal").modal("hide");
                         $scope.loading=false;
@@ -320,7 +324,7 @@ angular.module('bjbController',[])
             case 'edit':
                 $scope.loading=true;
 
-                Cabang.update(id,this.newForm)
+                Kcp.update(id,this.newForm)
                     .success(function(data){
                         $scope.loading=false;
                         $("#myModal").modal("hide");
@@ -338,11 +342,13 @@ angular.module('bjbController',[])
     };
 
     $scope.detail=function(id){
-        $scope.detail={};
+        $scope.detailForm={};
 
-        Cabang.getById(id)
+        getCabang();
+
+        Kcp.getById(id)
             .success(function(data){
-                $scope.details=data;
+                $scope.detailForm={cabang:data.id_cabang,nama:data.nama_kcp,alamat:data.alamat_kcp,telp:data.telp_kcp,fax:data.fax_kcp,username:data.username,password:data.password};
             })
 
         $("#myModalDetail").modal('show');
@@ -361,7 +367,7 @@ angular.module('bjbController',[])
             closeOnCancel: false 
         }, function(isConfirm){   
             if (isConfirm) {     
-                Cabang.delete(id)
+                Kcp.delete(id)
                     .success(function(data){
                         get();
                         $scope.pesan=data;

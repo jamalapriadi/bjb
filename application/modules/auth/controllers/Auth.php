@@ -64,7 +64,7 @@ class Auth extends CI_Controller {
 				//if the login is successful
 				//redirect them back to the home page
 				$this->session->set_flashdata('message', "<div class='alert alert-info'>".$this->ion_auth->messages()."</div>");
-				redirect('home', 'refresh');
+				redirect('admin/dashboard', 'refresh');
 			}
 			else
 			{

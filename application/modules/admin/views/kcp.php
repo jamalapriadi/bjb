@@ -23,13 +23,13 @@
                                 <td>{{r.nama_kcp}}</td>
                                 <td>{{r.alamat_kcp}}</td>
                                 <td>
-                                    <a href="#" class="btn btn-sm btn-primary">
+                                    <a href="#" class="btn btn-sm btn-primary" ng-click="detail(r.id_kcp)">
                                         <i class="fa fa-eye"></i>
                                     </a>
-                                    <a href="#" class="btn btn-sm btn-warning">
+                                    <a href="#" class="btn btn-sm btn-warning" ng-click="form('edit',r.id_kcp)">
                                         <i class="fa fa-edit"></i>
                                     </a>
-                                    <a href="#" class="btn btn-sm btn-danger">
+                                    <a href="#" class="btn btn-sm btn-danger" ng-click="hapus(r.id_kcp)">
                                         <i class="fa fa-trash"></i>
                                     </a>
                                 </td>
@@ -83,6 +83,11 @@
                             </div>
 
                             <div class="form-group">
+                                <label for="">Fax</label>
+                                <input type="text" ng-model="newForm.fax" ng-value="newForm.fax" name="fax" class="form-control">
+                            </div>
+
+                            <div class="form-group">
                                 <label for="">Username</label>
                                 <input type="text" ng-model="newForm.username" ng-value="newForm.username" class="form-control">
                             </div>
@@ -96,6 +101,67 @@
 
 
                             <button type="submit" class="btn btn-primary" ng-click="save(modalstate,id)">Simpan</button>
+                            <button type="button" data-dismiss="modal" class="btn btn-default">Cancel</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="myModalDetail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">{{form_title}}</h4>
+                    </div>
+
+                    <div class="modal-body">
+                        <form name="registrasi">
+                            <div id="loading" class="alert alert-info" ng-show="loading">
+                                <i class="fa fa-spin fa-spinner"></i> Please Wait. . .
+                            </div>
+
+                            <div class="form-group">
+                                <label for="">Cabang</label>
+                                <select ui-select2="select2Options" ng-model="detailForm.cabang" data-placeholder="Pilih Cabang" class="form-control" disabled>
+                                    <option ng-repeat="l in list" value="{{l.id_cabang}}">{{l.nama_cabang}}</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="">Nama</label>
+                                <input type="text" ng-model="detailForm.nama" ng-value="detailForm.nama" class="form-control" disabled>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="">Alamat</label>
+                                <textarea name="alamat" ng-model="detailForm.alamat" id="alamat" cols="30" rows="10" class="form-control" disabled>{{detailForm.alamat}}</textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="">Telp</label>
+                                <input type="telp" ng-model="detailForm.telp" ng-value="detailForm.telp" name="telp" class="form-control" disabled>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="">Fax</label>
+                                <input type="text" ng-model="detailForm.fax" ng-value="detailForm.fax" name="fax" class="form-control" disabled>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="">Username</label>
+                                <input type="text" ng-model="detailForm.username" ng-value="detailForm.username" class="form-control" disabled>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="">Password</label>
+                                <input type="password" ng-model="detailForm.password" class="form-control" disabled>
+                            </div>
+
+                            <hr>
+
+
                             <button type="button" data-dismiss="modal" class="btn btn-default">Cancel</button>
                         </form>
                     </div>

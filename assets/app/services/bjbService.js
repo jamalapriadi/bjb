@@ -62,7 +62,28 @@ angular.module('bjbService',[])
 	return{
 		get:function(){
 			return $http.get('../api/kcp');
-		}
+		},
+
+		getById:function(id){
+			return $http.get('../api/kcpDetail/'+id);
+		},
+
+		update:function(id,data){
+			return $http({
+                method:'PUT',
+                url:'../api/kcp/'+id,
+                headers:{'Content-Type':'application/x-www-form-urlencoded'},
+                data:$.param(data)
+            });
+		},
+
+		save:function(data){
+			return $http.post('../api/kcp',data);
+		},
+
+		delete:function(id){
+			return $http.delete('../api/kcp/'+id);
+		},
 	}
 })
 

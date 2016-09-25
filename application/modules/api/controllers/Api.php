@@ -172,6 +172,84 @@ class Api extends REST_Controller{
 
 		$this->response($data);
 	}
+
+	function kcp_post(){
+		$this->form_validation->set_data($this->post());
+
+		$this->form_validation->set_rules('cabang','Cabang','required');
+		$this->form_validation->set_rules('nama','Nama','required');
+		$this->form_validation->set_rules('alamat','Alamat','required');
+		$this->form_validation->set_rules('telp','Telp','required');
+		$this->form_validation->set_rules('fax','Fax','required');
+		$this->form_validation->set_rules('username','Username','required');
+		$this->form_validation->set_rules('password','Password','required');
+
+		if($this->form_validation->run()==true){
+			$data=array(
+					'id_cabang'=>$this->post('cabang'),
+					'nama_kcp'=>$this->post('nama'),
+					'alamat_kcp'=>$this->post('alamat'),
+					'telp_kcp'=>$this->post('telp'),
+					'fax_kcp'=>$this->post('fax'),
+					'username'=>$this->post('username'),
+					'password'=>md5($this->post('password'))
+				);
+
+			$this->kcp->save($data);
+
+			$json=array('success'=>true,'pesan'=>'Data Berhasil disimpan');
+		}else{
+			$json=array('success'=>false,'pesan'=>'Data Gagal disimpan, Data tidak lengkap');
+		}
+
+		$this->response($json);
+	}
+
+	function kcp_put($id){
+		$this->form_validation->set_data($this->put());
+
+		$this->form_validation->set_rules('cabang','Cabang','required');
+		$this->form_validation->set_rules('nama','Nama','required');
+		$this->form_validation->set_rules('alamat','Alamat','required');
+		$this->form_validation->set_rules('telp','Telp','required');
+		$this->form_validation->set_rules('fax','Fax','required');
+		$this->form_validation->set_rules('username','Username','required');
+		$this->form_validation->set_rules('password','Password','required');
+
+		if($this->form_validation->run()==true){
+			$data=array(
+					'id_cabang'=>$this->put('cabang'),
+					'nama_kcp'=>$this->put('nama'),
+					'alamat_kcp'=>$this->put('alamat'),
+					'telp_kcp'=>$this->put('telp'),
+					'fax_kcp'=>$this->put('fax'),
+					'username'=>$this->put('username'),
+					'password'=>md5($this->put('password'))
+				);
+
+			$this->kcp->update($id,$data);
+
+			$json=array('success'=>true,'pesan'=>'Data Berhasil diupdate');
+		}else{
+			$json=array('success'=>false,'pesan'=>'Data Gagal disimpan, Data tidak lengkap');
+		}
+
+		$this->response($json);	
+	}
+
+	function kcpDetail_get($id){
+		$kcp=$this->kcp->get_by_id($id);
+
+		$this->response($kcp,200);
+	}
+
+	function kcp_delete($id){
+		$this->kcp->delete($id);
+
+		$json=array('success'=>true,'pesan'=>'Data berhasil dihapus');
+
+		$this->response($json,200);
+	}
 	/* end kcp*/
 
 	/* posisi */

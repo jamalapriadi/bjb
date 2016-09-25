@@ -14,4 +14,25 @@ class M_kcp extends CI_Model{
 
 		return $this->db->get()->result();
 	}
+
+	function get_by_id($id){
+		$this->db->where($this->primary,$id);
+		$this->db->from($this->table);
+
+		return $this->db->get()->row_array();	
+	}
+
+	function save($data){
+		$this->db->insert($this->table,$data);
+	}
+
+	function update($id,$data){
+		$this->db->where($this->primary,$id);
+		$this->db->update($this->table,$data);
+	}
+
+	function delete($id){
+		$this->db->where($this->primary,$id);
+		$this->db->delete($this->table);
+	}
 }

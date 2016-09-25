@@ -24,6 +24,7 @@ class Admin extends bjb_Controller{
 
 	function kanpus(){
 		$data['title']='Pusat';
+		$data['ctrl']="kanpus";
 
 		$this->template->admin('kanpus',$data);
 	}
@@ -126,6 +127,13 @@ class Admin extends bjb_Controller{
 	}
 
 	function logout(){
-		
+		$this->data['title'] = "Logout";
+
+		// log the user out
+		$logout = $this->ion_auth->logout();
+
+		// redirect them to the login page
+		$this->session->set_flashdata('message', "<div class='alert alert-success'>".$this->ion_auth->messages()."</div>");
+		redirect('auth/login', 'refresh');
 	}
 }
