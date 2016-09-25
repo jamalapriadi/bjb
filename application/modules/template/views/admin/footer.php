@@ -11,12 +11,12 @@
     <script type="text/javascript" src="<?php echo base_url('assets/select2/select2.js');?>"></script>
 
     <!-- angular -->
-    <script src="http://localhost/node_modules/angular/angular.js"></script>
-    <script src="http://localhost/node_modules/angular/angular-resource.js"></script>
-    <script src="http://localhost/node_modules/loading/angular-spinner.min.js"></script>
-    <script src="http://localhost/node_modules/loading/angular-loading-spinner.js"></script>
-    <script src="http://localhost/node_modules/angular-datatables/dist/angular-datatables.min.js"></script>
-    <script src="http://localhost/node_modules/angular/angular-animate.js"></script>
+    <script src="<?php echo base_url('assets/angular/angular.js');?>"></script>
+    <script src="<?php echo base_url('assets/angular/angular-resource.js');?>"></script>
+    <script src="<?php echo base_url('assets/loading/angular-spinner.min.js');?>"></script>
+    <script src="<?php echo base_url('assets/loading/angular-loading-spinner.js');?>"></script>
+    <script src="<?php echo base_url('assets/angular-datatables/dist/angular-datatables.min.js');?>"></script>
+    <script src="<?php echo base_url('assets/angular/angular-animate.js');?>"></script>
     <script type="text/javascript" src="<?php echo base_url('assets/angular-ui-select2/src/select2.js');?>"></script>
     <!-- file upload-->
     <script src="<?php echo base_url('assets/ng-file-upload/dist/ng-file-upload-shim.min.js');?>"></script> <!-- for no html5 browsers support -->
