@@ -88,7 +88,7 @@ class Admin extends bjb_Controller{
 
 	function fisiks_kcp(){
 		$data['title']="KCP";
-		$data['ctr']='fisikKcp';
+		$data['ctrl']='fisikKcp';
 
 		$this->template->admin('fisik_kcp',$data);
 	}
