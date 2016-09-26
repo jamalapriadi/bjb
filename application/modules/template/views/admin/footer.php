@@ -17,7 +17,11 @@
     <script src="<?php echo base_url('assets/loading/angular-loading-spinner.js');?>"></script>
     <script src="<?php echo base_url('assets/angular-datatables/dist/angular-datatables.min.js');?>"></script>
     <script src="<?php echo base_url('assets/angular/angular-animate.js');?>"></script>
+    <script src="<?php echo base_url('assets/angular/angular-sanitize.min.js');?>"></script>
     <script type="text/javascript" src="<?php echo base_url('assets/angular-ui-select2/src/select2.js');?>"></script>
+    <script src="<?php echo base_url('assets/moment/moment.js');?>"></script>
+    <script src="<?php echo base_url('assets/bootstrap-daterangepicker/daterangepicker.js');?>"></script>
+    <script src="<?php echo base_url('assets/angular-daterangepicker/js/angular-daterangepicker.js');?>"></script>
     <!-- file upload-->
     <script src="<?php echo base_url('assets/ng-file-upload/dist/ng-file-upload-shim.min.js');?>"></script> <!-- for no html5 browsers support -->
     <script src="<?php echo base_url('assets/ng-file-upload/dist/ng-file-upload.min.js');?>"></script>

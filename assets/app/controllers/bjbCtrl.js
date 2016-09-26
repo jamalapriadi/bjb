@@ -637,12 +637,31 @@ angular.module('bjbController',[])
     };
 })
 
-.controller('positionsMcoa',function($scope,$timeout,$filter,$filter){
+.controller('positionsMcoa',function($scope,$timeout,$filter,Posisi,Mcoa){
     $scope.idposisi = $filter('_uriseg')(3);
     $scope.idkategori = $filter('_uriseg')(4);
 
-    console.log($scope.idposisi);
-    console.log($scope.idkategori);
+    $scope.posisi={};
+
+    function getPosisi(){
+        Mcoa.getPosisiById($scope.idkategori)
+            .success(function(data){
+                $scope.posisi=data;
+            })
+    }
+
+    getPosisi();
+
+    $scope.items = [];
+    $scope.newitem = '';
+
+    $scope.tambahPilihan=function(){
+        $scope.items.push($scope.items.length);
+    }
+
+    $scope.del = function(i){
+        $scope.items.splice(i,1);
+    }
 })
 .controller('staff',function($scope,$timeout,Kcp){
 	$scope.hasils=[];
@@ -664,21 +683,107 @@ angular.module('bjbController',[])
 
 .controller('fisik',function($scope,$timeout,Fisiks){
 	$scope.hasils=[];
+    $scope.kanwil=[];
+    $scope.list=[];
 
-	function tampilPesan(){
+    function tampilPesan(){
         $scope.showMessage=true; 
         $timeout(function () { $scope.showMessage = false; }, 5000); 
     }
 
     function get(){
-    	Fisiks.get()
-    		.success(function(data){
-    			$scope.hasils=data;
-    		})
+        Fisiks.get()
+            .success(function(data){
+                $scope.hasils=data;
+            })
     }
 
-
     get();
+
+    $scope.form=function(modalstate,id){
+        $scope.modalstate=modalstate;
+        $scope.id=id;
+
+        switch(modalstate){
+            case "tambah":
+                $scope.form_title="Tambah Daftar Fisik";
+                $scope.newForm={nama:''}
+
+                break;
+            case "edit":
+                $scope.form_title="Update Daftar Fisik";
+                Fisiks.getById(id)
+                    .success(function(data){
+                        $scope.newForm={'nama':data.nama_fisik};
+                    })
+                break;
+            default:
+                $scope.newForm={};
+                break;
+        }
+        $("#myModal").modal('show');
+    };
+
+    //simpan
+    $scope.save=function(modalstate,id){
+        switch(modalstate){
+            case "tambah":
+                $scope.loading=true;
+                Fisiks.save(this.newForm)
+                    .success(function(data){
+                        $("#myModal").modal("hide");
+                        $scope.loading=false;
+                        $scope.newForm={};
+                        get();
+                        $scope.pesan=data;
+                        tampilPesan();
+                    });
+                break;
+            case 'edit':
+                $scope.loading=true;
+
+                Fisiks.update(id,this.newForm)
+                    .success(function(data){
+                        $scope.loading=false;
+                        $("#myModal").modal("hide");
+                        $scope.newForm={};
+                        get();
+                        $scope.pesan=data;
+                        tampilPesan();
+                    })
+                break;
+
+            default:
+                $scope.newForm={};
+                break;
+        }
+    };
+
+    $scope.hapus=function(id){
+        swal({   
+            title: "Are you sure?",   
+            text: "Do you want to delete it?",   
+            type: "warning",   
+            showCancelButton: true,   
+            confirmButtonColor: "#DD6B55",   
+            confirmButtonText: "Yes, delete it!",   
+            cancelButtonText: "No",   
+            closeOnConfirm: false,   
+            closeOnCancel: false 
+        }, function(isConfirm){   
+            if (isConfirm) {     
+                Fisiks.delete(id)
+                    .success(function(data){
+                        get();
+                        $scope.pesan=data;
+                        swal("Deleted!", data.pesan, "success");   
+                        tampilPesan();
+                    })
+            } else {     
+                swal("Cancelled", "Your data is safe :)", "error");   
+            } 
+        });
+    };
 })
 
 .controller('fisikKcp',function($scope,$timeout,Kcp){
@@ -701,6 +806,9 @@ angular.module('bjbController',[])
 
 .controller('laporan',function($scope,$timeout,Laporan){
 	$scope.hasils=[];
+    $scope.datePicker={};
+
+    $scope.datePicker.date = {startDate: null, endDate: null};
 
 	function tampilPesan(){
         $scope.showMessage=true; 
@@ -708,13 +816,104 @@ angular.module('bjbController',[])
     }
 
     function get(){
-    	Laporan.get()
+    	Laporan.daftar()
     		.success(function(data){
     			$scope.hasils=data;
     		})
     }
 
     get();
+
+    $scope.form=function(modalstate,id){
+        $scope.modalstate=modalstate;
+        $scope.id=id;
+
+        switch(modalstate){
+            case "tambah":
+
+                $scope.form_title="Tambah Laporan";
+                $scope.nama="";
+                $scope.datePicker.date = {startDate: null, endDate: null};
+
+                break;
+            case "edit":
+                $scope.form_title="Update Laporan";
+                $scope.nama="";
+                $scope.datePicker.date = {startDate: null, endDate: null};
+                Laporan.daftarById(id)
+                    .success(function(data){
+                        $scope.nama=data.nama;
+                        $scope.datePicker.date = {startDate: data.start_date, endDate: data.end_date};
+                    })
+                break;
+            default:
+                $scope.newForm={};
+                break;
+        }
+        $("#myModal").modal('show');
+    };
+
+    //simpan
+    $scope.save=function(modalstate,id){
+        switch(modalstate){
+            case "tambah":
+                var data={nama:$scope.nama,start:$scope.datePicker.date.startDate,end:$scope.datePicker.date.endDate};
+                $scope.loading=true;
+                Laporan.daftarSave(data)
+                    .success(function(result){
+                        $("#myModal").modal("hide");
+                        $scope.loading=false;
+                        get();
+                        $scope.pesan=data;
+                        tampilPesan();
+                    });
+                break;
+            case 'edit':
+                $scope.loading=true;
+
+                var data={nama:$scope.nama,start:$scope.datePicker.date.startDate,end:$scope.datePicker.date.endDate};
+
+                Laporan.daftarUpdate(id,data)
+                    .success(function(data){
+                        $scope.loading=false;
+                        $("#myModal").modal("hide");
+                        get();
+                        $scope.pesan=data;
+                        tampilPesan();
+                    })
+                break;
+
+            default:
+                $scope.newForm={};
+                break;
+        }
+    };
+
+    $scope.hapus=function(id){
+        swal({   
+            title: "Are you sure?",   
+            text: "Do you want to delete it?",   
+            type: "warning",   
+            showCancelButton: true,   
+            confirmButtonColor: "#DD6B55",   
+            confirmButtonText: "Yes, delete it!",   
+            cancelButtonText: "No",   
+            closeOnConfirm: false,   
+            closeOnCancel: false 
+        }, function(isConfirm){   
+            if (isConfirm) {     
+                Laporan.deleteDaftar(id)
+                    .success(function(data){
+                        get();
+                        $scope.pesan=data;
+                        swal("Deleted!", data.pesan, "success");   
+                        tampilPesan();
+                    })
+            } else {     
+                swal("Cancelled", "Your data is safe :)", "error");   
+            } 
+        });
+    };
 })
 
 .controller('laporanListKcp',function($scope,$timeout,Laporan){

@@ -397,7 +397,131 @@ class Api extends REST_Controller{
 
 		$this->response($data);
 	}
+
+	function fisik_post(){
+		$this->form_validation->set_data($this->post());
+
+		$this->form_validation->set_rules('nama','Nama','required');
+
+		if($this->form_validation->run()==true){
+			$data=array(
+					'nama_fisik'=>$this->post('nama')
+				);
+
+			$this->fisik->save($data);
+
+			$json=array('success'=>true,'pesan'=>'Data Berhasil disimpan');
+		}else{
+			$json=array('success'=>false,'pesan'=>'Data tidak lengkap');
+		}
+
+		$this->response($json);
+	}
+
+	function fisikDetail_get($id){
+		$data=$this->fisik->get_by_id($id);
+
+		$this->response($data);
+	}
+
+	function fisik_put($id){
+		$this->form_validation->set_data($this->put());
+
+		$this->form_validation->set_rules('nama','Nama','required');
+
+		if($this->form_validation->run()==true){
+			$data=array(
+					'nama_fisik'=>$this->put('nama')
+				);
+
+			$this->fisik->update($id,$data);
+
+			$json=array('success'=>true,'pesan'=>'Data Berhasil diupdate');
+		}else{
+			$json=array('success'=>false,'pesan'=>'Data Gagal diupdate, Data tidak lengkap');
+		}
+
+		$this->response($json);
+	}
+
+	function fisik_delete($id){
+		$this->fisik->delete($id);
+
+		$json=array('success'=>true,'pesan'=>'Data Berhasil dihapus');
+
+		$this->response($json);
+	}
 	/* end fisik */
+
+	/*daftar*/
+	function daftar_get(){
+		$data=$this->laporan->daftar();
+
+		$this->response($data,200);
+	}
+
+	function daftar_post(){
+		$this->form_validation->set_data($this->post());
+
+		$this->form_validation->set_rules('nama','Nama','required');
+		$this->form_validation->set_rules('start','Start','required');
+		$this->form_validation->set_rules('end','End','required');
+
+		if($this->form_validation->run()==true){
+			$data=array(
+					'nama'=>$this->post('nama'),
+					'start_date'=>date('Y-m-d',strtotime($this->post('start'))),
+					'end_date'=>date('Y-m-d',strtotime($this->post('end')))
+				);
+
+			$this->laporan->saveDaftar($data);
+
+			$json=array('success'=>true,'pesan'=>'Data Berhasil disimpan');
+		}else{
+			$json=array('success'=>false,'pesan'=>'Data gagal disimpan, data kurang lengkap');
+		}
+
+		$this->response($json);
+	}
+
+	function daftarDetail_get($id){
+		$data=$this->laporan->daftar_by_id($id);
+
+		$this->response($data);
+	}
+
+	function daftar_put($id){
+		$this->form_validation->set_data($this->put());
+
+		$this->form_validation->set_rules('nama','Nama','required');
+		$this->form_validation->set_rules('start','Start','required');
+		$this->form_validation->set_rules('end','End','required');
+
+		if($this->form_validation->run()==true){
+			$data=array(
+					'nama'=>$this->put('nama'),
+					'start_date'=>date('Y-m-d',strtotime($this->put('start'))),
+					'end_date'=>date('Y-m-d',strtotime($this->put('end')))
+				);
+
+			$this->laporan->updateDaftar($id,$data);
+
+			$json=array('success'=>true,'pesan'=>'Data Berhasil diupdate');
+		}else{
+			$json=array('success'=>false,'pesan'=>'Data gagal disimpan, data kurang lengkap');
+		}
+
+		$this->response($json);
+	}
+
+	function daftar_delete($id){
+		$this->laporan->deleteDaftar($id);
+
+		$json=array('success'=>true,'pesan'=>'Data berhasil dihapus');
+
+		$this->response($json);
+	}
+	/* end of daftar */
 
 	/* daftar laporan */
 	function laporan_get(){

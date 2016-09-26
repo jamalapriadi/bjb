@@ -9,12 +9,12 @@
                     <form>
                         <div class="form-group">
                             <label for="">Posisi</label>
-                            <input type="text" class="form-control">
+                            <input type="text" ng-value="posisi.nama_posisi" class="form-control" disabled>
                         </div>
 
                         <div class="form-group">
                             <label for="">Kategori</label>
-                            <input type="text" class="form-control">
+                            <input type="text" ng-value="posisi.nama_kategori" class="form-control" disabled>
                         </div>
 
                         <div class="form-group">
@@ -38,8 +38,22 @@
                             <input type="text" class="form-control">
                         </div>
 
+                        <div ng-repeat='item in items'>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <!--
+                                        <input type="text" class="form-control" ng-model='item' ng-value="{{$index}}">
+                                    -->
+                                    <input type="text" class="form-control" ng-model='item' ng-value="{{$index}}">
+                                    <span class="input-group-addon" ng-click="del($index)">
+                                        <i class="fa fa-trash"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="form-group">
-                            <a href="#" class="btn btn-primary">
+                            <a href="#" class="btn btn-primary" ng-click="tambahPilihan()">
                                 <i class="fa fa-plus"></i>
                                 Tambah Pilihan
                             </a>

@@ -120,18 +120,56 @@ angular.module('bjbService',[])
 	return{
 		get:function(){
 			return $http.get('../api/fisik');
+		},
+
+		getById:function(id){
+			return $http.get('../api/fisikDetail/'+id);
+		},
+
+		update:function(id,data){
+			return $http({
+                method:'PUT',
+                url:'../api/fisik/'+id,
+                headers:{'Content-Type':'application/x-www-form-urlencoded'},
+                data:$.param(data)
+            });
+		},
+
+		save:function(data){
+			return $http.post('../api/fisik',data);
+		},
+
+		delete:function(id){
+			return $http.delete('../api/fisik/'+id);
 		}
 	}
 })
 
 .service('Laporan',function($http){
 	return{
-		get:function($id){
-			return $http.get('../api/laporan/'+id);
+		daftar:function(){
+			return $http.get('../api/daftar');
 		},
 
-		listKcp:function(){
-			return $http.get('../api/laporan_list_kcp');	
+		daftarSave:function(data){
+			return $http.post('../api/daftar',data);
+		},
+
+		daftarById:function(id){
+			return $http.get('../api/daftarDetail/'+id);
+		},
+
+		daftarUpdate:function(id,data){
+			return $http({
+                method:'PUT',
+                url:'../api/daftar/'+id,
+                headers:{'Content-Type':'application/x-www-form-urlencoded'},
+                data:$.param(data)
+            });
+		},
+
+		deleteDaftar:function(id){
+			return $http.delete('../api/daftar/'+id);
 		}
 	}
 })
@@ -161,6 +199,10 @@ angular.module('bjbService',[])
 
 		getById:function(id){
 			return $http.get('../../api/categoryDetailMcoa/'+id);
+		},
+
+		getPosisiById:function(id){
+			return $http.get('../../../api/categoryDetailMcoa/'+id);
 		}
 	}
 })

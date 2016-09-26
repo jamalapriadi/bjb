@@ -10,4 +10,27 @@ class M_laporan extends CI_Model{
 
 		return $this->db->get()->result();
 	}
+
+	function daftar(){
+		return $this->db->get($this->table)->result();
+	}
+
+	function saveDaftar($data){
+		$this->db->insert($this->table,$data);
+	}
+
+	function daftar_by_id($id){
+		$this->db->where($this->primary,$id);
+		return $this->db->get($this->table)->row_array();
+	}
+
+	function updateDaftar($id,$data){
+		$this->db->where($this->primary,$id);
+		$this->db->update($data);
+	}
+
+	function deleteDaftar($id){
+		$this->db->where($this->primary,$id);
+		$this->db->delete($this->table);	
+	}
 }

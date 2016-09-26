@@ -31,6 +31,9 @@
     <!-- data tables -->
     <link href="<?php echo base_url('assets/css/dataTables.bootstrap.css');?>" rel="stylesheet">
     <link href="<?php echo base_url('assets/sweetalert/dist/sweetalert.css');?>" rel="stylesheet">
+
+    <!-- daterange-->
+    <link rel="stylesheet" href="<?php echo base_url('assets/bootstrap-daterangepicker/daterangepicker.css');?>"/>
     
     <!-- jquery -->
     <script src="<?php echo base_url('assets/js/jquery-1.11.1.min.js');?>"></script>
