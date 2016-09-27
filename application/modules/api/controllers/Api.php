@@ -504,9 +504,9 @@ class Api extends REST_Controller{
 					'end_date'=>date('Y-m-d',strtotime($this->put('end')))
 				);
 
-			$this->laporan->updateDaftar($id,$data);
+			//$this->laporan->updateDaftar($id,$data);
 
-			$json=array('success'=>true,'pesan'=>'Data Berhasil diupdate');
+			$json=array('success'=>true,'pesan'=>'Data Berhasil diupdate','id'=>$id,'data'=>$data);
 		}else{
 			$json=array('success'=>false,'pesan'=>'Data gagal disimpan, data kurang lengkap');
 		}
