@@ -3,12 +3,17 @@ class Admin extends bjb_Controller{
 	function __construct(){
 		parent::__construct();
 		$this->load->library(array('menu','template','datatables'));
+		$this->load->helper('tanggal');
 		/*
 		if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin())
 		{
 		    redirect('auth', 'refresh');
 		}
 		*/
+
+		if(!$this->session->userdata('kunjungan')){
+			redirect('home');
+		}
 	}
 
 	function dashboard(){
@@ -128,6 +133,8 @@ class Admin extends bjb_Controller{
 
 	function logout(){
 		$this->data['title'] = "Logout";
+
+		$this->session->unset_userdata('kunjungan');
 
 		// log the user out
 		$logout = $this->ion_auth->logout();

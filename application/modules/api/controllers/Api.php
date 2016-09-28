@@ -523,6 +523,14 @@ class Api extends REST_Controller{
 	}
 	/* end of daftar */
 
+	/* laporan kcp */
+	function laporanKcp_get(){
+		$data=$this->report->get();
+
+		$this->response($data,200);
+	}
+	/* end laporan kcp*/
+
 	/* daftar laporan */
 	function laporan_get(){
 		$data=$this->laporan->get();

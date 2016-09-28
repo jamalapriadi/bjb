@@ -170,6 +170,10 @@ angular.module('bjbService',[])
 
 		deleteDaftar:function(id){
 			return $http.delete('../api/daftar/'+id);
+		},
+
+		listKcp(){
+			return $http.get('../api/laporanKcp');
 		}
 	}
 })

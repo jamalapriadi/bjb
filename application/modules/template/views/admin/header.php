@@ -69,7 +69,7 @@
                 <ul class="nav navbar-nav">
                     <li>
                         <a href="<?php echo site_url('home');?>">
-                            <strong>Kunjungan 1</strong>
+                            <strong><?php echo $this->session->kunjungan['nama'];?></strong>
                         </a>
                     </li>
                     <!-- User Account: style can be found in dropdown.less -->

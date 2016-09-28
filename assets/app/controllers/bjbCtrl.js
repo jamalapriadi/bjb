@@ -875,6 +875,7 @@ angular.module('bjbController',[])
 
                 Laporan.daftarUpdate(id,data)
                     .success(function(data){
+                        console.log(data);
                         $scope.loading=false;
                         $("#myModal").modal("hide");
                         get();

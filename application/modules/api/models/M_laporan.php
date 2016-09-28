@@ -11,6 +11,14 @@ class M_laporan extends CI_Model{
 		return $this->db->get()->result();
 	}
 
+	function get_by_id($id){
+		$this->db->where($this->primary,$id);
+		$this->db->select($this->select);
+		$this->db->from($this->table);
+
+		return $this->db->get()->row_array();	
+	}
+
 	function daftar(){
 		return $this->db->get($this->table)->result();
 	}

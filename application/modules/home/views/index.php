@@ -1,34 +1,20 @@
-
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8"/>
     <meta name="keywords" content=""/>
     <meta name="description" content=""/>
-    <meta name="author" content="Jamal Apriadi"/>
+    <meta name="author" content="Jamal Selaatan"/>
     <title>Dashboard</title>
     <link rel="stylesheet" href="<?php echo base_url('assets/css/style.css');?>" />
-
-    
-            <!--<style>
-            body {
-                padding-bottom: 160px;
-            }
-        </style>-->
-        
-        
-                <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-        <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-        <![endif]-->
 </head>
 
 <body>
 
     <nav class="navbar navbar-default navbar-top" role="navigation">
-        <div style="height:70px;"></div>
+        <div style="height:70px;">
+
+        </div>
         <div class="container">
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -45,7 +31,18 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="<?php echo site_url('auth/logout');?>" style="background-color:white">
+                                <a href="#">
+                                    Home
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="<?php echo site_url('admin');?>">
+                                    Panel
+                                </a>
+                            </li>
+                            <li>
+                                <a href="<?php echo site_url('admin/logout');?>" style="background-color:white">
                                     <img class="logout-btn" src="<?php echo base_url('assets/images/logout-button.png');?>"></img>
                                 </a>
                             </li>
@@ -75,23 +72,19 @@
         <div class="box box-solid">
             <div class="box-body">
                 <div class="row mrg-top-20">
-                    <div class="col-sm-9 kunjungan">
-                        <div class="kunjungan-id">KUNJUNGAN 1</div>
-                        <div>Start :</div>
-                        <div>Kamis, 01 Oktober 2015</div>
-                        <div>End :</div>
-                        <div>Kamis, 19 Nopember 2015</div>
-                        <div><a class="white" href="<?php echo site_url('session/kunjungan/1');?>">Go &#9654;</a></div>
-                    </div>
-                    
-                    <div class="col-sm-9 kunjungan">
-                        <div class="kunjungan-id">KUNJUNGAN 2</div>
-                        <div>Start :</div>
-                        <div>Senin, 23 Nopember 2015</div>
-                        <div>End :</div>
-                        <div>Selasa, 29 Desember 2015</div>
-                        <div><a class="white" href="http://ms-bjbsyariah.com/session/kunjungan/2">Go &#9654;</a></div>
-                    </div>
+                    <?php foreach($laporan as $lap){
+                        ?>
+                            <div class="col-sm-9 kunjungan">
+                                <div class="kunjungan-id"><?php echo $lap->nama;?></div>
+                                <div>Start :</div>
+                                <div><?php echo nama_hari($lap->start_date);?>, <?php echo tgl_indo($lap->start_date);?></div>
+                                <div>End :</div>
+                                <div><?php echo nama_hari($lap->end_date);?>, <?php echo tgl_indo($lap->end_date);?></div>
+                                <div><a class="white" href="<?php echo site_url('home/session/'.$lap->id);?>">Go &#9654;</a></div>
+                            </div>
+                        <?php
+                    }
+                    ?>
                 </div>
             </div>
         </div>
@@ -110,5 +103,5 @@
     <script src="<?php echo base_url('assets/js/bootstrap.min.js');?>"></script>
     <script src="<?php echo base_url('assets/js/script.js');?>"></script>
 
-</body>
+    </body>
 </html>

@@ -19,8 +19,14 @@
                         <tbody>
                             <tr ng-repeat="r in hasils">
                                 <td>{{$index+1}}</td>
-                                <td>{{r.nama}}</td>
-                                <td>{{r.start_date}} - {{r.end_date}}</td>
+                                <td>{{r.nama_cabang}}</td>
+                                <td>{{r.nama_kcp}}</td>
+                                <td>
+                                    <span ng-if="r.index_nilai==null">-</span>
+                                    <span ng-if="r.index_nilai!=null">
+                                        {{r.index_nilai}}
+                                    </span>
+                                </td>
                                 <td>
                                     <a href="#" class="btn btn-sm btn-primary">
                                         <i class="fa fa-bar-chart-o"></i>
