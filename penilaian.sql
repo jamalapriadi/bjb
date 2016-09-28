@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Sep 25, 2016 at 10:42 PM
+-- Generation Time: Sep 28, 2016 at 09:43 AM
 -- Server version: 5.7.15-0ubuntu0.16.04.1
 -- PHP Version: 7.0.11-1+deb.sury.org~xenial+1
 
@@ -66,8 +66,8 @@ CREATE TABLE `daftar_laporan` (
 --
 
 INSERT INTO `daftar_laporan` (`id`, `nama`, `start_date`, `end_date`) VALUES
-(1, 'Kunjingan 1', '2016-09-21', '2016-09-30'),
-(2, 'Kunjungan 2', '2016-10-01', '2016-10-21');
+(4, 'Kunjungan 1', '2016-10-01', '2016-10-20'),
+(5, 'Kunjungan 2', '2016-10-20', '2016-11-10');
 
 -- --------------------------------------------------------
 
@@ -130,7 +130,15 @@ CREATE TABLE `fisik` (
 
 INSERT INTO `fisik` (`id_fisik`, `nama_fisik`) VALUES
 (1, 'ATM'),
-(2, 'Banking Hall');
+(2, 'Banking Hall'),
+(3, 'Kondisi Kantor Cabang'),
+(5, 'Kondisi Luar Banking Hall'),
+(6, 'Meja'),
+(7, 'Mobil'),
+(8, 'Mushola'),
+(9, 'Peralatan Banking Hall'),
+(10, 'Toilet'),
+(11, 'Toilet Wanita');
 
 -- --------------------------------------------------------
 
@@ -232,8 +240,7 @@ INSERT INTO `kanwil` (`id_kanwil`, `nama_kanwil`, `id_kanpus`) VALUES
 (5, 'Kanwil V', 1),
 (6, 'Kanwil VI', 1),
 (7, 'Kanwil VII', 1),
-(8, 'Kanwil VIII', 1),
-(13, 'Tes', 1);
+(8, 'Kanwil VIII', 1);
 
 -- --------------------------------------------------------
 
@@ -259,7 +266,8 @@ CREATE TABLE `kcp` (
 --
 
 INSERT INTO `kcp` (`id_kcp`, `id_cabang`, `nama_kcp`, `alamat_kcp`, `telp_kcp`, `fax_kcp`, `foto_kcp`, `username`, `password`) VALUES
-(1, 1, 'KC Bandung Pelajar Pejuang', 'Jl. Pelajar Pejuang 45 No.54 Kota Bandung, Jawa Barat', '022-7316408, 7306745', '022-7306619, 7308038', NULL, NULL, NULL);
+(1, 1, 'KC Bandung Pelajar Pejuang', 'Jl. Pelajar Pejuang 45 No.54 Kota Bandung, Jawa Barat', '022-7316408, 7306745', '022-7306619, 7308038', NULL, NULL, NULL),
+(2, 1, 'KCP Soreang', 'Jl. Raya Soreang Banjaran No.11 Soreang Kab. Bandung, Jawa Barat', '0856', '1213', NULL, 'aziz', '77f96d74d7');
 
 -- --------------------------------------------------------
 
@@ -273,6 +281,7 @@ CREATE TABLE `laporan_staff_or_fisik` (
   `id_kcp` int(11) UNSIGNED NOT NULL,
   `id_staff` int(11) UNSIGNED NOT NULL,
   `id_fisik` int(11) UNSIGNED NOT NULL,
+  `id_daftar_laporan` int(11) UNSIGNED NOT NULL,
   `index_nilai` decimal(10,0) NOT NULL,
   `user_id` int(11) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -311,7 +320,8 @@ CREATE TABLE `mcoa_kategori` (
 --
 
 INSERT INTO `mcoa_kategori` (`id_kategori`, `nama_kategori`, `id_posisi`, `id_fisik`, `jenis`) VALUES
-(10, 'Telepon tersambung ke cabang', 3, NULL, 'Mcoa');
+(10, 'Telepon tersambung ke cabang', 3, NULL, 'Mcoa'),
+(11, 'Tes kedua', 3, NULL, 'Mcoa');
 
 -- --------------------------------------------------------
 
@@ -421,6 +431,7 @@ DROP TABLE IF EXISTS `report_kcp`;
 CREATE TABLE `report_kcp` (
   `id` int(10) UNSIGNED NOT NULL,
   `id_kcp` int(10) UNSIGNED NOT NULL,
+  `id_daftar_laporan` int(11) UNSIGNED NOT NULL,
   `index_nilai` decimal(10,0) NOT NULL,
   `user_id` int(10) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -473,7 +484,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `ip_address`, `username`, `password`, `salt`, `email`, `activation_code`, `forgotten_password_code`, `forgotten_password_time`, `remember_code`, `created_on`, `last_login`, `active`, `first_name`, `last_name`, `company`, `phone`) VALUES
-(1, '127.0.0.1', 'administrator', '$2a$07$SeBknntpZror9uyftVopmu61qg0ms8Qv1yV6FG.kQOSM.9QhmTo36', '', 'admin@admin.com', '', NULL, NULL, NULL, 1268889823, 1474768922, 1, 'Admin', 'istrator', 'ADMIN', '0');
+(1, '127.0.0.1', 'administrator', '$2a$07$SeBknntpZror9uyftVopmu61qg0ms8Qv1yV6FG.kQOSM.9QhmTo36', '', 'admin@admin.com', '', NULL, NULL, NULL, 1268889823, 1475000501, 1, 'Admin', 'istrator', 'ADMIN', '0');
 
 -- --------------------------------------------------------
 
@@ -592,7 +603,8 @@ ALTER TABLE `laporan_staff_or_fisik`
   ADD KEY `id_kcp` (`id_kcp`),
   ADD KEY `id_staff` (`id_staff`),
   ADD KEY `id_fisik` (`id_fisik`),
-  ADD KEY `user_id` (`user_id`);
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `id_daftar_laporan` (`id_daftar_laporan`);
 
 --
 -- Indexes for table `login_attempts`
@@ -640,7 +652,8 @@ ALTER TABLE `posisi`
 ALTER TABLE `report_kcp`
   ADD PRIMARY KEY (`id`),
   ADD KEY `id_kcp` (`id_kcp`),
-  ADD KEY `user_id` (`user_id`);
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `id_daftar_laporan` (`id_daftar_laporan`);
 
 --
 -- Indexes for table `staff`
@@ -677,7 +690,7 @@ ALTER TABLE `cabang`
 -- AUTO_INCREMENT for table `daftar_laporan`
 --
 ALTER TABLE `daftar_laporan`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT for table `detail_laporan`
 --
@@ -697,7 +710,7 @@ ALTER TABLE `file_report_kcp`
 -- AUTO_INCREMENT for table `fisik`
 --
 ALTER TABLE `fisik`
-  MODIFY `id_fisik` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_fisik` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 --
 -- AUTO_INCREMENT for table `fisik_kcp`
 --
@@ -722,12 +735,12 @@ ALTER TABLE `kanpus`
 -- AUTO_INCREMENT for table `kanwil`
 --
 ALTER TABLE `kanwil`
-  MODIFY `id_kanwil` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id_kanwil` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 --
 -- AUTO_INCREMENT for table `kcp`
 --
 ALTER TABLE `kcp`
-  MODIFY `id_kcp` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_kcp` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `laporan_staff_or_fisik`
 --
@@ -742,7 +755,7 @@ ALTER TABLE `login_attempts`
 -- AUTO_INCREMENT for table `mcoa_kategori`
 --
 ALTER TABLE `mcoa_kategori`
-  MODIFY `id_kategori` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id_kategori` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 --
 -- AUTO_INCREMENT for table `menu`
 --
@@ -752,7 +765,7 @@ ALTER TABLE `menu`
 -- AUTO_INCREMENT for table `parameter`
 --
 ALTER TABLE `parameter`
-  MODIFY `id_parameter` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_parameter` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `pengguna`
 --
@@ -841,7 +854,8 @@ ALTER TABLE `laporan_staff_or_fisik`
   ADD CONSTRAINT `f_fisiks` FOREIGN KEY (`id_fisik`) REFERENCES `fisik` (`id_fisik`),
   ADD CONSTRAINT `f_kcpp` FOREIGN KEY (`id_kcp`) REFERENCES `kcp` (`id_kcp`),
   ADD CONSTRAINT `f_staff` FOREIGN KEY (`id_fisik`) REFERENCES `fisik` (`id_fisik`),
-  ADD CONSTRAINT `f_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+  ADD CONSTRAINT `f_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  ADD CONSTRAINT `fas` FOREIGN KEY (`id_daftar_laporan`) REFERENCES `daftar_laporan` (`id`);
 
 --
 -- Constraints for table `mcoa_kategori`
@@ -855,6 +869,14 @@ ALTER TABLE `mcoa_kategori`
 --
 ALTER TABLE `parameter`
   ADD CONSTRAINT `id_kat` FOREIGN KEY (`id_kategori`) REFERENCES `mcoa_kategori` (`id_kategori`);
+
+--
+-- Constraints for table `report_kcp`
+--
+ALTER TABLE `report_kcp`
+  ADD CONSTRAINT `asd` FOREIGN KEY (`id_daftar_laporan`) REFERENCES `daftar_laporan` (`id`),
+  ADD CONSTRAINT `fkckp` FOREIGN KEY (`id_kcp`) REFERENCES `kcp` (`id_kcp`),
+  ADD CONSTRAINT `fkckpsd` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
 --
 -- Constraints for table `users_groups`
