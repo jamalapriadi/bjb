@@ -21,10 +21,13 @@
                                 <td>{{r.nama}}</td>
                                 <td>{{r.start_date}} - {{r.end_date}}</td>
                                 <td>
-                                    <a href="#" class="btn btn-sm btn-warning" ng-click="form('edit',r.id)">
+                                    <a href="#" class="btn btn-xs btn-primary" ng-click="daftar(r.id)">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
+                                    <a href="#" class="btn btn-xs btn-warning" ng-click="form('edit',r.id)">
                                         <i class="fa fa-edit"></i>
                                     </a>
-                                    <a href="#" class="btn btn-sm btn-danger" ng-click="hapus(r.id)">
+                                    <a href="#" class="btn btn-xs btn-danger" ng-click="hapus(r.id)">
                                         <i class="fa fa-trash"></i>
                                     </a>
                                 </td>

@@ -23,13 +23,13 @@
                                 <td>{{r.nama_kcp}}</td>
                                 <td>{{r.alamat_kcp}}</td>
                                 <td>
-                                    <a href="#" class="btn btn-sm btn-primary" ng-click="detail(r.id_kcp)">
+                                    <a href="#" class="btn btn-xs btn-sm btn-primary" ng-click="detail(r.id_kcp)">
                                         <i class="fa fa-eye"></i>
                                     </a>
-                                    <a href="#" class="btn btn-sm btn-warning" ng-click="form('edit',r.id_kcp)">
+                                    <a href="#" class="btn btn-xs btn-sm btn-warning" ng-click="form('edit',r.id_kcp)">
                                         <i class="fa fa-edit"></i>
                                     </a>
-                                    <a href="#" class="btn btn-sm btn-danger" ng-click="hapus(r.id_kcp)">
+                                    <a href="#" class="btn btn-xs btn-sm btn-danger" ng-click="hapus(r.id_kcp)">
                                         <i class="fa fa-trash"></i>
                                     </a>
                                 </td>
@@ -87,6 +87,16 @@
                                 <input type="text" ng-model="newForm.fax" ng-value="newForm.fax" name="fax" class="form-control">
                             </div>
 
+
+                            <div class="form-group">
+                                <label for="picture">Foto</label>  
+                                <div ng-if="newForm.foto_kcp!=NULL || newForm.foto_kcp==''">
+                                    <img src="<?php echo base_url();?>uploads/{{newForm.foto_kcp}}" alt="" class="img-responsive" style="width:150px;height:150px;">
+                                </div>
+                                <input id="file" ngf-select ng-model="picFile" ngf-max-size="2MB" name="file" type="file" class="form-control" accept="image/*" >
+                            </div>
+
+
                             <div class="form-group">
                                 <label for="">Username</label>
                                 <input type="text" ng-model="newForm.username" ng-value="newForm.username" class="form-control">
@@ -100,7 +110,7 @@
                             <hr>
 
 
-                            <button type="submit" class="btn btn-primary" ng-click="save(modalstate,id)">Simpan</button>
+                            <button type="submit" class="btn btn-primary" ng-click="save(modalstate,id,picFile)">Simpan</button>
                             <button type="button" data-dismiss="modal" class="btn btn-default">Cancel</button>
                         </form>
                     </div>
@@ -148,6 +158,13 @@
                                 <label for="">Fax</label>
                                 <input type="text" ng-model="detailForm.fax" ng-value="detailForm.fax" name="fax" class="form-control" disabled>
                             </div>
+                            
+                            <div class="form-group">
+                                <label for="picture">Foto</label>  
+                                <img src="<?php echo base_url();?>uploads/{{detailForm.foto_kcp}}" alt="" class="img-responsive" style="width:120px;height:120px;">
+                            </div>
+                            
+                            <!--
 
                             <div class="form-group">
                                 <label for="">Username</label>
@@ -158,11 +175,12 @@
                                 <label for="">Password</label>
                                 <input type="password" ng-model="detailForm.password" class="form-control" disabled>
                             </div>
+                            -->
 
                             <hr>
 
 
-                            <button type="button" data-dismiss="modal" class="btn btn-default">Cancel</button>
+                            <button type="button" data-dismiss="modal" class="btn btn-default">Close</button>
                         </form>
                     </div>
                 </div>

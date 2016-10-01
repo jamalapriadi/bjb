@@ -24,6 +24,7 @@ class Home extends Bjb_Controller{
 	}
 
 	function kunjungan(){
-		$this->load->view('kunjungan');
+		$data['ctrl']="kunjungan";
+		$this->template->front('kunjungan',$data);
 	}
 }

@@ -181,10 +181,20 @@ class Api extends REST_Controller{
 		$this->form_validation->set_rules('alamat','Alamat','required');
 		$this->form_validation->set_rules('telp','Telp','required');
 		$this->form_validation->set_rules('fax','Fax','required');
-		$this->form_validation->set_rules('username','Username','required');
-		$this->form_validation->set_rules('password','Password','required');
 
 		if($this->form_validation->run()==true){
+			//jika ada file
+			$config['upload_path']          = './uploads/';
+			$config['allowed_types']        = 'gif|jpg|png';
+			$config['max_size']             = 2000;
+	 
+			$this->load->library('upload', $config);
+	 
+			if ( $this->upload->do_upload('file')){
+				$file=$this->upload->file_name;
+			}
+
+			//end jika ada file
 			$data=array(
 					'id_cabang'=>$this->post('cabang'),
 					'nama_kcp'=>$this->post('nama'),
@@ -192,12 +202,14 @@ class Api extends REST_Controller{
 					'telp_kcp'=>$this->post('telp'),
 					'fax_kcp'=>$this->post('fax'),
 					'username'=>$this->post('username'),
-					'password'=>md5($this->post('password'))
+					'password'=>md5($this->post('password')),
+					'foto_kcp'=>$file
 				);
 
 			$this->kcp->save($data);
 
 			$json=array('success'=>true,'pesan'=>'Data Berhasil disimpan');
+			
 		}else{
 			$json=array('success'=>false,'pesan'=>'Data Gagal disimpan, Data tidak lengkap');
 		}
@@ -205,8 +217,10 @@ class Api extends REST_Controller{
 		$this->response($json);
 	}
 
-	function kcp_put($id){
-		$this->form_validation->set_data($this->put());
+	function updateKcp_post(){
+		$id=$this->post('kode');
+
+		$this->form_validation->set_data($this->post());
 
 		$this->form_validation->set_rules('cabang','Cabang','required');
 		$this->form_validation->set_rules('nama','Nama','required');
@@ -217,14 +231,23 @@ class Api extends REST_Controller{
 		$this->form_validation->set_rules('password','Password','required');
 
 		if($this->form_validation->run()==true){
+			$config['upload_path']          = './uploads/';
+			$config['allowed_types']        = 'gif|jpg|png';
+			$config['max_size']             = 2000;
+	 
+			$this->load->library('upload', $config);
+	 
+			if ( $this->upload->do_upload('file')){
+				$file=$this->upload->file_name;
+			}
+
 			$data=array(
-					'id_cabang'=>$this->put('cabang'),
-					'nama_kcp'=>$this->put('nama'),
-					'alamat_kcp'=>$this->put('alamat'),
-					'telp_kcp'=>$this->put('telp'),
-					'fax_kcp'=>$this->put('fax'),
-					'username'=>$this->put('username'),
-					'password'=>md5($this->put('password'))
+					'id_cabang'=>$this->post('cabang'),
+					'nama_kcp'=>$this->post('nama'),
+					'alamat_kcp'=>$this->post('alamat'),
+					'telp_kcp'=>$this->post('telp'),
+					'fax_kcp'=>$this->post('fax'),
+					'foto_kcp'=>$file
 				);
 
 			$this->kcp->update($id,$data);

@@ -274,11 +274,17 @@ angular.module('bjbController',[])
             })
     }
 
-    get();
-
     $scope.select2Options = {
         allowClear:true
     };
+
+    function awal(){
+        $("#myModal").modal("hide");
+        $scope.loading=false;
+        $scope.newForm={};
+        get();
+        tampilPesan();
+    }
 
     $scope.form=function(modalstate,id){
         $scope.modalstate=modalstate;
@@ -296,7 +302,7 @@ angular.module('bjbController',[])
                 $scope.form_title="Update KCP";
                 Kcp.getById(id)
                     .success(function(data){
-                        $scope.newForm={cabang:data.id_cabang,nama:data.nama_kcp,alamat:data.alamat_kcp,telp:data.telp_kcp,fax:data.fax_kcp,username:data.username,password:data.password};
+                        $scope.newForm={cabang:data.id_cabang,nama:data.nama_kcp,alamat:data.alamat_kcp,telp:data.telp_kcp,fax:data.fax_kcp,username:data.username,password:data.password,foto_kcp:data.foto_kcp};
                     })
                 break;
             default:
@@ -307,10 +313,11 @@ angular.module('bjbController',[])
     };
 
     //simpan
-    $scope.save=function(modalstate,id){
+    $scope.save=function(modalstate,id,file){
         switch(modalstate){
             case "tambah":
                 $scope.loading=true;
+                /*
                 Kcp.save(this.newForm)
                     .success(function(data){
                         $("#myModal").modal("hide");
@@ -320,10 +327,72 @@ angular.module('bjbController',[])
                         $scope.pesan=data;
                         tampilPesan();
                     });
+                */
+
+                // upload on file select or drop
+                file.upload = Upload.upload({
+                  url: '../api/kcp',
+                  data: {
+                        nama: $scope.newForm.nama,
+                        cabang:$scope.newForm.cabang, 
+                        alamat:$scope.newForm.alamat,
+                        telp:$scope.newForm.telp,
+                        fax:$scope.newForm.fax,
+                        username:$scope.newForm.username,
+                        password:$scope.newForm.password,
+                        file: file
+                    },
+                });
+
+                file.upload.then(function (response) {
+                    awal();
+                    $timeout(function () {
+                        file.result = response.pesan;
+                    });
+                }, function (response) {
+                    awal();
+                    if (response.success > 0)
+                        $scope.errorMsg = response.success + ': ' + response.pesan;
+                }, function (evt) {
+                    // Math.min is to fix IE which reports 200% sometimes
+                    file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
+                });
                 break;
             case 'edit':
                 $scope.loading=true;
+                
+                file.upload = Upload.upload({
+                  url: '../api/updateKcp/',
+                  method:'post',
+                  data: {
+                        kode:id,
+                        nama: $scope.newForm.nama,
+                        cabang:$scope.newForm.cabang, 
+                        alamat:$scope.newForm.alamat,
+                        telp:$scope.newForm.telp,
+                        fax:$scope.newForm.fax,
+                        username:$scope.newForm.username,
+                        password:$scope.newForm.password,
+                        file: file
+                    },
+                });
 
+
+                file.upload.then(function (response) {
+                    awal();
+                    $timeout(function () {
+                        file.result = response.pesan;
+                    });
+                }, function (response) {
+                    awal();
+                    if (response.success > 0)
+                        $scope.errorMsg = response.success + ': ' + response.pesan;
+                }, function (evt) {
+                    // Math.min is to fix IE which reports 200% sometimes
+                    file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
+                });
+
+                /*
                 Kcp.update(id,this.newForm)
                     .success(function(data){
                         $scope.loading=false;
@@ -333,6 +402,7 @@ angular.module('bjbController',[])
                         $scope.pesan=data;
                         tampilPesan();
                     })
+                    */
                 break;
 
             default:
@@ -348,7 +418,7 @@ angular.module('bjbController',[])
 
         Kcp.getById(id)
             .success(function(data){
-                $scope.detailForm={cabang:data.id_cabang,nama:data.nama_kcp,alamat:data.alamat_kcp,telp:data.telp_kcp,fax:data.fax_kcp,username:data.username,password:data.password};
+                $scope.detailForm={cabang:data.id_cabang,nama:data.nama_kcp,alamat:data.alamat_kcp,telp:data.telp_kcp,fax:data.fax_kcp,username:data.username,password:data.password,foto_kcp:data.foto_kcp};
             })
 
         $("#myModalDetail").modal('show');
