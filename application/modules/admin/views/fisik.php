@@ -19,16 +19,16 @@
                                 <td>{{$index+1}}</td>
                                 <td>{{r.nama_fisik}}</td>
                                 <td>
-                                    <a href="#" class="btn btn-sm btn-default">
+                                    <a href="<?php echo site_url();?>admin/fisik_category_mcoa/{{r.id_fisik}}" class="btn btn-sm btn-xs btn-default">
                                         <i class="fa fa-check"></i>
                                     </a>
-                                    <a href="#" class="btn btn-sm btn-success">
+                                    <a href="<?php echo site_url();?>admin/fisik_parameter_category/{{r.id_fisik}}" class="btn btn-xs btn-sm btn-success">
                                         <i class="fa fa-tags"></i>
                                     </a>
-                                    <a href="#" class="btn btn-sm btn-warning" ng-click="form('edit',r.id_fisik)">
+                                    <a href="#" class="btn btn-xs btn-sm btn-warning" ng-click="form('edit',r.id_fisik)">
                                         <i class="fa fa-edit"></i>
                                     </a>
-                                    <a href="#" class="btn btn-sm btn-danger" ng-click="hapus(r.id_fisik)">
+                                    <a href="#" class="btn btn-xs btn-sm btn-danger" ng-click="hapus(r.id_fisik)">
                                         <i class="fa fa-trash"></i>
                                     </a>
                                 </td>

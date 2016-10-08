@@ -54,15 +54,15 @@
                                 <td>{{$index+1}}</td>
                                 <td>{{p.nama_kategori}}</td>
                                 <td>
-                                    <a href="<?php echo site_url();?>admin/positions_mcoa/{{posisi.id_posisi}}/{{p.id_kategori}}" class="btn btn-sm btn-success" title="MCOA">
+                                    <a href="<?php echo site_url();?>admin/positions_mcoa/{{posisi.id_posisi}}/{{p.id_kategori}}" class="btn btn-xs btn-sm btn-success" title="MCOA">
                                         <i class="fa fa-signal"></i>
                                     </a>
 
-                                    <a href="#" class="btn btn-warning btn-sm" title="Rubah" ng-click="form('edit',p.id_kategori)">
+                                    <a href="#" class="btn btn-warning btn-xs btn-sm" title="Rubah" ng-click="form('edit',p.id_kategori)">
                                         <i class="fa fa-edit"></i>
                                     </a>
 
-                                    <a href="#" class="btn btn-danger btn-sm" ng-click="hapus(p.id_kategori)">
+                                    <a href="#" class="btn btn-danger btn-xs btn-sm" ng-click="hapus(p.id_kategori)">
                                         <i class="fa fa-trash"></i>
                                     </a>
                                 </td>

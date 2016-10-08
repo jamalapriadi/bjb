@@ -13,5 +13,3 @@ bjbApp.filter('_uriseg', function($location) {
     return false;
   }
 });
-
-

@@ -29,4 +29,9 @@ class M_posisi extends CI_Model{
 		$this->db->where($this->primary,$id);
 		$this->db->delete($this->table);
 	}
+
+	function get_fisik_by_id($id){
+		$this->db->where('id_fisik',$id);
+		return $this->db->get('fisik')->row_array();
+	}
 }

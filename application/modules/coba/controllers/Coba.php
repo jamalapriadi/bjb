@@ -1,6 +1,6 @@
 <?php
 
-class Coba extends MX_Controller{
+class Coba extends CI_Controller{
 	
 	function __construct()
 	{
@@ -10,8 +10,6 @@ class Coba extends MX_Controller{
 
 	function index()
 	{
-		$data['query'] = $this->db->get('tbl_menu')->result();
-
-		echo json_encode($data['query']);
+		$this->load->view('index');
 	}
 }

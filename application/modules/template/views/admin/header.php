@@ -15,7 +15,7 @@
     <link href="<?php echo base_url('assets/font-awesome/css/font-awesome.css');?> " rel="stylesheet" type="text/css" />
 
     <!-- Theme style -->
-    <link href="<?php echo base_url('assets/css/AdminLTE.css');?>" rel="stylesheet" type="text/css" />
+    <link href="<?php echo base_url('assets/css/AdminLTE-2.css');?>" rel="stylesheet" type="text/css" />
 
     <!-- selectize -->
     <link rel="stylesheet" href="<?php echo base_url('assets/select2/select2.css');?>">
@@ -35,8 +35,7 @@
     <!-- daterange-->
     <link rel="stylesheet" href="<?php echo base_url('assets/bootstrap-daterangepicker/daterangepicker.css');?>"/>
     
-    <!-- jquery -->
-    <script src="<?php echo base_url('assets/js/jquery-1.11.1.min.js');?>"></script>
+    
 
     <style>
         .modal.large .modal-dialog {

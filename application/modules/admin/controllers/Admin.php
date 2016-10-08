@@ -71,11 +71,26 @@ class Admin extends bjb_Controller{
 
 	}
 
+	function parameter_category($id){
+		$data['title']="Tambah Kategori Parameter";
+		$data['ctrl']="parameterMcoa";
+		$data['id']=$id;
+
+		$this->template->admin('category_mcoa',$data);		
+	}
+
 	function positions_mcoa($lokasi,$kategori){
 		$data['title']="MCOA Posisi";
 		$data['ctrl']="positionsMcoa";
 
 		$this->template->admin('positions_mcoa',$data);
+	}
+
+	function positions_fisik_mcoa($lokasi,$kategori){
+		$data['title']="MCOA Fisik";
+		$data['ctrl']="positionsFisikMcoa";
+
+		$this->template->admin('positions_fisik_mcoa',$data);
 	}
 
 	function staffs_kcp(){
@@ -97,6 +112,13 @@ class Admin extends bjb_Controller{
 		$data['ctrl']='fisikKcp';
 
 		$this->template->admin('fisik_kcp',$data);
+	}
+
+	function fisik_per_kcp($id){
+		$data['title']="Fisik KCP";
+		$data['ctrl']="fisikPerKcp";
+
+		$this->template->admin('fisik_per_kcp',$data);
 	}
 
 	function laporan_daftar(){
@@ -125,6 +147,27 @@ class Admin extends bjb_Controller{
 		$data['ctrl']="laporanListFisik";
 
 		$this->template->admin('laporan_list_fisik',$data);	
+	}
+
+	function staff_kcp($id){
+		$data['title']="Staff";
+		$data['ctrl']="staffKcp";
+
+		$this->template->admin('staff_kcp',$data);
+	}
+
+	function fisik_category_mcoa($id){
+		$data['title']="Kategori MCOA Posisi";
+		$data['ctrl']="fisikKategoriMcoa";
+
+		$this->template->admin('fisik_kategori_mcoa',$data);
+	}
+
+	function fisik_parameter_category($id){
+		$data['title']='Kategori Parameter Fisik';
+		$data['ctrl']="fisikParameterMcoa";
+
+		$this->template->admin('fisik_parameter_mcoa',$data);
 	}
 
 	function login(){

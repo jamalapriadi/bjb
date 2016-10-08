@@ -10,10 +10,17 @@ class M_mcoa extends CI_Model{
 	}
 
 	function get_by_id($id){
-		$this->db->select("id_kategori,nama_kategori,mcoa_kategori.id_posisi,id_fisik,nama_posisi,jenis");
+		$this->db->select("id_kategori,nama_kategori,mcoa_kategori.id_posisi id_posisi,id_fisik,nama_posisi,jenis");
 		$this->db->where($this->primary,$id);
 		$this->db->join($this->posisi,$this->key);
-		return $this->db->get($this->table)->row_array();
+		return $this->db->get($this->table)->row();
+	}
+
+	function get_by_fisik_id($id){
+		$this->db->select("id_kategori,nama_kategori,mcoa_kategori.id_posisi id_posisi,mcoa_kategori.id_fisik,nama_fisik,jenis");
+		$this->db->where($this->primary,$id);
+		$this->db->join('fisik','fisik.id_fisik=mcoa_kategori.id_fisik');
+		return $this->db->get($this->table)->row();
 	}
 
 	function update($id,$data){
@@ -33,4 +40,18 @@ class M_mcoa extends CI_Model{
 		return $this->db->get($this->table)->result();
 	}
 	*/
+
+	function parameter_by_kategori($id){
+		$this->db->where('id_kategori',$id);
+
+		return $this->db->get('parameter');
+	}
+
+	function delete_parameter($id){
+		//hapus detail parameter
+		$this->db->query("delete from detail_parameter where id_parameter='".$id."'");
+
+		//hapus parameter
+		$this->db->query("delete from parameter where id_parameter='".$id."'");
+	}
 }

@@ -19,19 +19,19 @@
                                 <td>{{$index+1}}</td>
                                 <td>{{r.nama_posisi}}</td>
                                 <td>
-                                    <a href="<?php echo site_url();?>admin/category_mcoa/{{r.id_posisi}}" class="btn btn-sm btn-default" title="Kategori MCOA">
+                                    <a href="<?php echo site_url();?>admin/category_mcoa/{{r.id_posisi}}" class="btn btn-sm btn-xs btn-default" title="Kategori MCOA">
                                         <i class="fa fa-check"></i>
                                     </a>
-                                    <a href="#" class="btn btn-sm btn-success" title="Kategori Parameter">
+                                    <a href="<?php echo site_url();?>admin/parameter_category/{{r.id_posisi}}" class="btn btn-xs btn-sm btn-success" title="Kategori Parameter">
                                         <i class="fa fa-tags"></i>
                                     </a>
-                                    <a href="#" class="btn btn-sm btn-primary" title="Detail">
+                                    <a href="#" class="btn btn-xs btn-sm btn-primary" title="Detail">
                                         <i class="fa fa-eye"></i>
                                     </a>
-                                    <a href="#" class="btn btn-sm btn-warning" ng-click="form('edit',r.id_posisi)" title="Edit">
+                                    <a href="#" class="btn btn-xs btn-sm btn-warning" ng-click="form('edit',r.id_posisi)" title="Edit">
                                         <i class="fa fa-edit"></i>
                                     </a>
-                                    <a href="#" class="btn btn-sm btn-danger" ng-click="hapus(r.id_posisi)" title="Hapus">
+                                    <a href="#" class="btn btn-xs btn-sm btn-danger" ng-click="hapus(r.id_posisi)" title="Hapus">
                                         <i class="fa fa-trash"></i>
                                     </a>
                                 </td>

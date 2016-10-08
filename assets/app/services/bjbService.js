@@ -141,6 +141,31 @@ angular.module('bjbService',[])
 
 		delete:function(id){
 			return $http.delete('../api/fisik/'+id);
+		},
+
+		get_by_kcp:function(id){
+			return $http.get('../../api/fisik_by_kcp/'+id);
+		},
+
+		save_by_kcp:function(data){
+			return $http.post('../../api/fisik_by_kcp',data);
+		},
+
+		get_by_id_fisik:function(id){
+			return $http.get('../../api/get_by_id_fisik/'+id);
+		},
+
+		update_by_kcp:function(id,data){
+			return $http({
+                method:'PUT',
+                url:'../../api/fisik_by_kcp/'+id,
+                headers:{'Content-Type':'application/x-www-form-urlencoded'},
+                data:$.param(data)
+            });
+		},
+
+		delete_by_kcp:function(id){
+			return $http.delete('../../api/delete_by_kcp/'+id);
 		}
 	}
 })
@@ -180,12 +205,16 @@ angular.module('bjbService',[])
 
 .service('Mcoa',function($http){
 	return{
-		getPosisi:function(id){
-			return $http.get('../../api/categoryMcoaPosisi/'+id);
+		getPosisi:function(id,jenis){
+			return $http.get('../../api/categoryMcoaPosisi/'+id+'/'+jenis);
 		},
 
 		save:function(data){
 			return $http.post('../../api/categoryMcoa',data);
+		},
+
+		categoryMcoaPosisi:function(data){
+			return $http.post('../../../api/categoryMcoaPosisinya',data);
 		},
 
 		update:function(id,data){
@@ -207,6 +236,60 @@ angular.module('bjbService',[])
 
 		getPosisiById:function(id){
 			return $http.get('../../../api/categoryDetailMcoa/'+id);
+		},
+
+		deleteParameter:function(id){
+			return $http.delete('../../../api/deleteParameter/'+id);
+		},
+
+		/* fisik */
+		getFisikPosisi:function(id,jenis){
+			return $http.get('../../api/categoryFisikMcoaPosisi/'+id+'/'+jenis);	
+		},
+
+		saveFisik:function(data){
+			return $http.post('../../api/categoryFisikMcoa',data);	
+		},
+
+		getFisikById:function(id){
+			return $http.get('../../api/categoryFisikDetailMcoa/'+id);
+		},
+
+		getFisikId:function(id){
+			return $http.get('../../../api/categoryFisikDetailMcoa/'+id);
+		},
+
+		categoryMcoaFisik:function(data){
+			return $http.post('../../../api/categoryMcoaFisiknya',data);
+		},
+	}
+})
+
+.service('Staff',function($http){
+	return {
+		get_by_kcp:function(id){
+			return $http.get('../../api/staff/'+id);
+		},
+
+		getById:function(id){
+			return $http.get('../../api/staffDetail/'+id);
+		},
+
+		update:function(id,data){
+			return $http({
+                method:'PUT',
+                url:'../api/fisik/'+id,
+                headers:{'Content-Type':'application/x-www-form-urlencoded'},
+                data:$.param(data)
+            });
+		},
+
+		save:function(data){
+			return $http.post('../api/fisik',data);
+		},
+
+		delete:function(id){
+			return $http.delete('../../api/staff/'+id);
 		}
 	}
 })

@@ -10,10 +10,17 @@ class M_parameter extends CI_Model{
 		return $this->db->get()->result();
 	}
 
-	function get_by_posisi($id){
+	function get_by_posisi($id,$jenis){
 		$this->db->where('mcoa_kategori.id_posisi',$id);
-		$this->db->where('mcoa_kategori.jenis','Mcoa');
+		$this->db->where('mcoa_kategori.jenis',$jenis);
 		$this->db->join('posisi','posisi.id_posisi=mcoa_kategori.id_posisi');
+		return $this->db->get($this->table)->result();
+	}
+
+	function get_by_fisik($id,$jenis){
+		$this->db->where('mcoa_kategori.id_fisik',$id);
+		$this->db->where('mcoa_kategori.jenis',$jenis);
+		$this->db->join('fisik','fisik.id_fisik=mcoa_kategori.id_fisik');
 		return $this->db->get($this->table)->result();
 	}
 
@@ -34,5 +41,73 @@ class M_parameter extends CI_Model{
 	function delete($id){
 		$this->db->where($this->primary,$id);
 		$this->db->delete($this->table);
+	}
+
+	function save_parameter($data){
+		if($data['jenis']=='Mcoa'){
+			$param=$this->db->query("insert into parameter
+				(id_kategori,id_posisi,gender,nama_parameter)
+				values(
+						'".$data['id_kategori']."',
+						'".$data['id_posisi']."',
+						'".$data['pria'].",".$data['wanita']."',
+						'".$data['nama_parameter']."'
+					)
+				");
+
+			$insert_id = $this->db->insert_id();
+
+			foreach($data['pilihan'] as $row){
+				$this->db->query("
+						insert into detail_parameter (id_parameter,pilihan)
+						values('".$insert_id."','".$row."')
+					");
+			}
+		}else{
+			foreach($data['nama_parameter'] as $row){
+				$param=$this->db->query("insert into parameter
+					(id_kategori,id_posisi,gender,nama_parameter)
+					values(
+							'".$data['id_kategori']."',
+							'".$data['id_posisi']."',
+							'".$data['pria'].",".$data['wanita']."',
+							'".$row."'
+						)
+					");				
+			}
+		}
+	}
+
+	function save_fisik_parameter($data){
+		if($data['jenis']=='Mcoa'){
+			$param=$this->db->query("insert into parameter
+				(id_kategori,id_fisik,nama_parameter)
+				values(
+						'".$data['id_kategori']."',
+						'".$data['id_fisik']."',
+						'".$data['nama_parameter']."'
+					)
+				");
+
+			$insert_id = $this->db->insert_id();
+
+			foreach($data['pilihan'] as $row){
+				$this->db->query("
+						insert into detail_parameter (id_parameter,pilihan)
+						values('".$insert_id."','".$row."')
+					");
+			}
+		}else{
+			foreach($data['nama_parameter'] as $row){
+				$param=$this->db->query("insert into parameter
+					(id_kategori,id_fisik,nama_parameter)
+					values(
+							'".$data['id_kategori']."',
+							'".$data['id_fisik']."',
+							'".$row."'
+						)
+					");				
+			}
+		}
 	}
 }

@@ -23,7 +23,7 @@
                                 <td>{{r.nama_kcp}}</td>
                                 <td>{{r.alamat_kcp}}</td>
                                 <td>
-                                    <a href="#" class="btn btn-sm btn-primary">
+                                    <a href="<?php echo site_url();?>admin/fisik_per_kcp/{{r.id_kcp}}" class="btn btn-sm btn-xs btn-primary">
                                         <i class="fa fa-eye"></i>
                                     </a>
                                 </td>

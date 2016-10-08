@@ -15,6 +15,7 @@ class Api extends REST_Controller{
         $this->load->model('M_report','report');
         $this->load->model('M_Parameter','parameter');
         $this->load->model('M_mcoa','mcoa');
+        $this->load->model('M_staff','staff');
 
         $this->load->library(array('form_validation'));
         $this->load->helper('url');
@@ -344,15 +345,113 @@ class Api extends REST_Controller{
 	/* end posisi */
 
 	/* category mcoa */
-	function categoryMcoaPosisi_get($id){
+	function categoryMcoaPosisi_get($id,$jenis){
 		$posisi=$this->posisi->get_by_id($id);
-		$parameter=$this->parameter->get_by_posisi($id);
+		$parameter=$this->parameter->get_by_posisi($id,$jenis);
 
 		$json=array(
 				'posisi'=>$posisi,
 				'parameter'=>$parameter
 			);
 
+		$this->response($json);
+	}
+
+	function categoryFisikMcoaPosisi_get($id,$jenis){
+		$fisik=$this->posisi->get_fisik_by_id($id);
+		$parameter=$this->parameter->get_by_fisik($id,$jenis);
+
+		$json=array(
+				'fisik'=>$fisik,
+				'parameter'=>$parameter
+			);
+
+		$this->response($json);
+	}
+
+	function categoryMcoaPosisinya_post(){
+		$this->form_validation->set_data($this->post());
+
+		$this->form_validation->set_rules('kategori','Kategori','required');
+		$this->form_validation->set_rules('posisi','Posisi','required');
+		$this->form_validation->set_rules('jenis','Jenis','required');
+
+		if($this->form_validation->run()==false){
+			$json=array('success'=>false,'pesan'=>'Data Gagal disimpan');
+		}else{
+			$pilihan=$this->post('pilihan');
+
+			if($this->post('jenis')=='Mcoa'){
+				$data=array(
+					'id_kategori'=>$this->post('kategori'),
+					'id_posisi'=>$this->post('posisi'),
+					'nama_parameter'=>$this->post('pertanyaan'),
+					'pria'=>$this->post('pria'),
+					'wanita'=>$this->post('wanita'),
+					'pilihan'=>$this->post('pilihan'),
+					'jenis'=>$this->post('jenis')
+				);
+			}else if($this->post('jenis')=='Kategori'){
+				$data=array(
+					'id_kategori'=>$this->post('kategori'),
+					'id_posisi'=>$this->post('posisi'),
+					'nama_parameter'=>$this->post('pertanyaan'),
+					'pria'=>$this->post('pria'),
+					'wanita'=>$this->post('wanita'),
+					'jenis'=>$this->post('jenis')
+				);
+			}
+
+			
+			$parameter=$this->parameter->save_parameter($data);
+
+			$json=array('success'=>true,'pesan'=>'Data Berhasil disimpan','data'=>$data);
+		}
+		$this->response($json);
+	}
+
+	function categoryMcoaFisiknya_post(){
+		$this->form_validation->set_data($this->post());
+
+		$this->form_validation->set_rules('kategori','Kategori','required');
+		$this->form_validation->set_rules('fisik','Fisik','required');
+		$this->form_validation->set_rules('jenis','Jenis','required');
+
+		if($this->form_validation->run()==false){
+			$data=array(
+					'id_kategori'=>$this->post('kategori'),
+					'id_fisik'=>$this->post('fisik'),
+					'nama_parameter'=>$this->post('pertanyaan'),
+					'pilihan'=>$this->post('pilihan'),
+					'jenis'=>$this->post('jenis')
+				);
+
+			$json=array('success'=>false,'pesan'=>'Data Gagal disimpan','data'=>$data);
+		}else{
+			$pilihan=$this->post('pilihan');
+
+			if($this->post('jenis')=='Mcoa'){
+				$data=array(
+					'id_kategori'=>$this->post('kategori'),
+					'id_fisik'=>$this->post('fisik'),
+					'nama_parameter'=>$this->post('pertanyaan'),
+					'pilihan'=>$this->post('pilihan'),
+					'jenis'=>$this->post('jenis')
+				);
+			}else if($this->post('jenis')=='Kategori'){
+				$data=array(
+					'id_kategori'=>$this->post('kategori'),
+					'id_fisik'=>$this->post('fisik'),
+					'nama_parameter'=>$this->post('pertanyaan'),
+					'jenis'=>$this->post('jenis')
+				);
+			}
+
+			
+			$parameter=$this->parameter->save_fisik_parameter($data);
+
+			$json=array('success'=>true,'pesan'=>'Data Berhasil disimpan','data'=>$data);
+		}
 		$this->response($json);
 	}
 
@@ -366,7 +465,31 @@ class Api extends REST_Controller{
 			$data=array(
 					'nama_kategori'=>$this->post('kategori'),
 					'id_posisi'=>$this->post('posisi'),
-					'jenis'=>'Mcoa'
+					'jenis'=>$this->post('jenis')
+				);
+
+			$this->mcoa->save($data);
+
+			$json=array('success'=>true,'pesan'=>'Data Berhasil disimpan');
+		}else{
+			$json=array('success'=>false,'pesan'=>'Data tidak lengkap');
+		}
+
+		$this->response($json);
+	}
+
+	function categoryFisikMcoa_post(){
+		$this->form_validation->set_data($this->post());
+
+		$this->form_validation->set_rules('fisik','Fisik','required');
+		$this->form_validation->set_rules('kategori','Kategori','required');
+		$this->form_validation->set_rules('jenis','Jenis','required');
+
+		if($this->form_validation->run()==true){
+			$data=array(
+					'nama_kategori'=>$this->post('kategori'),
+					'id_fisik'=>$this->post('fisik'),
+					'jenis'=>$this->post('jenis')
 				);
 
 			$this->mcoa->save($data);
@@ -382,7 +505,32 @@ class Api extends REST_Controller{
 	function categoryDetailMcoa_get($id){
 		$mcoa=$this->mcoa->get_by_id($id);
 
-		$this->response($mcoa);
+		$data=array(
+				'id_kategori'=>$mcoa->id_kategori,
+				'nama_kategori'=>$mcoa->nama_kategori,
+				'id_posisi'=>$mcoa->id_posisi,
+				'id_fisik'=>$mcoa->id_fisik,
+				'nama_posisi'=>$mcoa->nama_posisi,
+				'jenis'=>$mcoa->jenis,
+				'parameter'=>$this->mcoa->parameter_by_kategori($id)->num_rows() > 0?$this->mcoa->parameter_by_kategori($id)->result():NULL
+			);
+
+		$this->response($data);
+	}
+
+	function categoryFisikDetailMcoa_get($id){
+		$mcoa=$this->mcoa->get_by_fisik_id($id);
+
+		$data=array(
+				'id_kategori'=>$mcoa->id_kategori,
+				'nama_kategori'=>$mcoa->nama_kategori,
+				'id_fisik'=>$mcoa->id_fisik,
+				'nama_fisik'=>$mcoa->nama_fisik,
+				'jenis'=>$mcoa->jenis,
+				'parameter'=>$this->mcoa->parameter_by_kategori($id)->num_rows() > 0?$this->mcoa->parameter_by_kategori($id)->result():NULL
+			);
+
+		$this->response($data);
 	}
 
 	function categoryMcoa_put($id){
@@ -407,6 +555,14 @@ class Api extends REST_Controller{
 
 	function categoryMcoa_delete($id){
 		$this->mcoa->delete($id);
+
+		$json=array('success'=>true,'pesan'=>'Data Berhasil dihapus');
+
+		$this->response($json);
+	}
+
+	function deleteParameter_delete($id){
+		$this->mcoa->delete_parameter($id);
 
 		$json=array('success'=>true,'pesan'=>'Data Berhasil dihapus');
 
@@ -471,6 +627,77 @@ class Api extends REST_Controller{
 		$this->fisik->delete($id);
 
 		$json=array('success'=>true,'pesan'=>'Data Berhasil dihapus');
+
+		$this->response($json);
+	}
+
+	function fisik_by_kcp_get($id){
+		$kcp=$this->kcp->get_by_id($id);
+		$data=$this->fisik->fisik_by_kcp($id);
+		$fisik=$this->fisik->get();
+
+
+		$json=array(
+				'kcp'=>$kcp,
+				'data'=>$data,
+				'fisik'=>$fisik
+			);
+
+		$this->response($json);
+	}
+
+	function fisik_by_kcp_post(){
+		$this->form_validation->set_data($this->post());
+
+		$this->form_validation->set_rules('kcp','Kcp','required');
+		$this->form_validation->set_rules('fisik','Fisik','required');
+
+		if($this->form_validation->run()==true){
+			$data=array(
+					'id_fisik'=>$this->post('fisik'),
+					'id_kcp'=>$this->post('kcp')
+				);
+
+			$this->fisik->save_fisik_by_kcp($data);
+
+			$json=array('success'=>true,'pesan'=>'Data Berhasil disimpan');
+		}else{
+			$json=array('success'=>false,'pesan'=>'Data Gagal disimpan, Data tidak lengkap');
+		}
+
+		$this->response($json);	
+	}
+
+	function get_by_id_fisik_get($id){
+		$fisik=$this->fisik->get_by_id_fisik($id);
+
+		$this->response($fisik);
+	}
+
+	function fisik_by_kcp_put($id){
+		$this->form_validation->set_data($this->put());
+
+		$this->form_validation->set_rules('fisik','Fisik','required');
+
+		if($this->form_validation->run()==true){
+			$data=array(
+					'id_fisik'=>$this->put('fisik')
+				);
+
+			$this->fisik->update_by_kcp($id,$data);
+
+			$json=array('success'=>true,'pesan'=>'Data Berhasil diupdate');
+		}else{
+			$json=array('success'=>false,'pesan'=>'Data Gagal diupdate, Data tidak lengkap');
+		}
+
+		$this->response($json);
+	}
+
+	function delete_by_kcp_delete($id){
+		$this->fisik->delete_by_kcp($id);
+
+		$json=array('success'=>true,'pesan'=>'Data berhasil dihapus');
 
 		$this->response($json);
 	}
@@ -569,4 +796,123 @@ class Api extends REST_Controller{
 		$this->response($data);
 	}
 	/* end report list kcp*/
+
+	/* staff */
+	function staff_get($id){
+		$kcp=$this->kcp->get_by_id($id);
+		$staff=$this->staff->get_by_kcp($id);
+		$posisi=$this->posisi->get();
+
+		$json=array(
+				'kcp'=>$kcp,
+				'staff'=>$staff,
+				'posisi'=>$posisi
+			);
+
+		$this->response($json);
+	}
+
+	function staff_post(){
+		$this->form_validation->set_data($this->post());
+
+		$this->form_validation->set_rules('kcp','Kcp','required');
+		$this->form_validation->set_rules('posisi','Posisi','required');
+		$this->form_validation->set_rules('nama','Nama','required');
+		$this->form_validation->set_rules('gender','Gender','required');
+
+		if($this->form_validation->run()==true){
+			//jika ada file
+			$config['upload_path']          = './uploads/staff/';
+			$config['allowed_types']        = 'gif|jpg|png';
+			$config['max_size']             = 2000;
+	 
+			$this->load->library('upload', $config);
+	 
+			if ( $this->upload->do_upload('file')){
+				$file=$this->upload->file_name;
+			}
+
+			//end jika ada file
+			$data=array(
+					'id_kcp'=>$this->post('kcp'),
+					'id_posisi'=>$this->post('posisi'),
+					'nama_staff'=>$this->post('nama'),
+					'gender'=>$this->post('gender'),
+					'foto'=>$file
+				);
+
+			$this->staff->save($data);
+
+			$json=array('success'=>true,'pesan'=>'Data Berhasil disimpan');
+			
+		}else{
+			$json=array('success'=>false,'pesan'=>'Data Gagal disimpan, Data tidak lengkap');
+		}
+
+		$this->response($json);
+	}
+
+	function staffDetail_get($id){
+		$data=$this->staff->get_by_id($id);
+
+		$this->response($data);
+	}
+
+	function updateStaff_post(){
+		$this->form_validation->set_data($this->post());
+
+		$this->form_validation->set_rules('kcp','Kcp','required');
+		$this->form_validation->set_rules('posisi','Posisi','required');
+		$this->form_validation->set_rules('nama','Nama','required');
+
+		if($this->form_validation->run()==true){
+			//jika ada file
+			$config['upload_path']          = './uploads/staff/';
+			$config['allowed_types']        = 'gif|jpg|png';
+			$config['max_size']             = 2000;
+	 
+			$this->load->library('upload', $config);
+
+			$id=$this->post('idstaff');
+	 
+			if ( $this->upload->do_upload('file')){
+				$file=$this->upload->file_name;
+
+				$data=array(
+					'id_kcp'=>$this->post('kcp'),
+					'id_posisi'=>$this->post('posisi'),
+					'nama_staff'=>$this->post('nama'),
+					'gender'=>$this->post('gender'),
+					'foto'=>$file
+				);
+			}else{
+				$data=array(
+					'id_kcp'=>$this->post('kcp'),
+					'id_posisi'=>$this->post('posisi'),
+					'nama_staff'=>$this->post('nama'),
+					'gender'=>$this->post('gender')
+				);
+			}
+
+			//end jika ada file
+
+			
+
+			$this->staff->update($id,$data);
+
+			$json=array('success'=>true,'pesan'=>'Data Berhasil diupdate');
+			
+		}else{
+			$json=array('success'=>false,'pesan'=>'Data Gagal disimpan, Data tidak lengkap','data'=>$data);
+		}
+
+		$this->response($json);
+	}
+
+	function staff_delete($id){
+		$this->staff->delete($id);
+
+		$json=array('success'=>true,'pesan'=>'Data berhasil dihapus');
+	}
+	/* end staff */
 }
