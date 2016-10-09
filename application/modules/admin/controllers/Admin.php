@@ -170,6 +170,13 @@ class Admin extends bjb_Controller{
 		$this->template->admin('fisik_parameter_mcoa',$data);
 	}
 
+	function report_kcp($id){
+		$data['title']="Report KCP";
+		$data['ctrl']="reportKcp";
+
+		$this->template->admin('report_kcp',$data);
+	}
+
 	function login(){
 		$this->load->view('login');
 	}
