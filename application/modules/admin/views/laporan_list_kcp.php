@@ -28,7 +28,7 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <a href="<?php echo site_url();?>admin/report_kcp/{{r.id_kcp}}" class="btn btn-sm btn-primary">
+                                    <a href="<?php echo site_url();?>admin/report_kcp/{{r.id_kcp}}" class="btn btn-sm btn-xs btn-primary">
                                         <i class="fa fa-bar-chart-o"></i>
                                     </a>
                                 </td>

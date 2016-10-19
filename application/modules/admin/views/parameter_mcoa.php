@@ -3,7 +3,7 @@
         <div class="col-sm-12">
             <div class="box box-primary">
                 <div class="box-header">
-                    <h3 class="box-title">Tambah Kategori MCOA</h3>
+                    <h3 class="box-title">Tambah Kategori Parameter</h3>
                 </div>
                 <div class="box-body">
                     <div class="alert alert-info" ng-show="loading">
@@ -12,8 +12,8 @@
 
                     <form>
                         <div class="form-gruop">
-                            <label for="">Fisik</label>
-                            <input type="text" ng-value="fisik.nama_fisik" class="form-control" disabled>
+                            <label for="">Posisi</label>
+                            <input type="text" ng-value="posisi.nama_posisi" class="form-control" disabled>
                         </div>
 
                         <div class="form-group">
@@ -38,7 +38,7 @@
         <div class="col-sm-12">
             <div class="box box-primary">
                 <div class="box-header">
-                    <h3 class="box-title">Daftar Kategori MCOA</h3>
+                    <h3 class="box-title">Daftar Kategori Parameter</h3>
                 </div>
                 <div class="box-body">
                     <table id="example" class="table table-bordered" datatable="ng">
@@ -54,7 +54,7 @@
                                 <td>{{$index+1}}</td>
                                 <td>{{p.nama_kategori}}</td>
                                 <td>
-                                    <a href="<?php echo site_url();?>admin/positions_fisik_mcoa/{{fisik.id_fisik}}/{{p.id_kategori}}" class="btn btn-xs btn-sm btn-success" title="MCOA">
+                                    <a href="<?php echo site_url();?>admin/positions_mcoa/{{posisi.id_posisi}}/{{p.id_kategori}}" class="btn btn-xs btn-sm btn-success" title="MCOA">
                                         <i class="fa fa-signal"></i>
                                     </a>
 

@@ -17,7 +17,7 @@ class Api extends REST_Controller{
         $this->load->model('M_mcoa','mcoa');
         $this->load->model('M_staff','staff');
 
-        $this->load->library(array('form_validation'));
+        $this->load->library(array('form_validation','ion_auth'));
         $this->load->helper('url');
     }
 
@@ -795,6 +795,139 @@ class Api extends REST_Controller{
 
 		$this->response($data);
 	}
+
+	function report_staff_kcp_get($id){
+		$data=$this->report->report_staff_kcp($id);
+
+		$this->response($data);
+	}
+
+	function report_fisik_kcp_get($id){
+		$data=$this->report->report_fisik_kcp($id);
+
+		$this->response($data);	
+	}
+
+	function report_by_kcp_get($id){
+		$report=$this->report->report_by_kcp($id);
+		$file=$this->report->file_report_by_kcp($id);
+
+		$json=array(
+				'kcp'=>$report,
+				'file'=>$file
+			);
+
+		$this->response($json);
+	}
+
+	function upload_report_kcp_post(){
+		$this->form_validation->set_data($this->post());
+
+		$this->form_validation->set_rules('kcp','Kcp','required');
+		$this->form_validation->set_rules('nilai','Nilai','required');
+
+		if($this->form_validation->run()==false){
+			$json=array('success'=>false,'pesan'=>'Data tidak lengkap');
+			$this->response($json);
+		}else{
+			$user = $this->ion_auth->user()->row();
+
+			$iduser=$user->id;
+
+			$kcp=$this->post('kcp');
+			$nilai=$this->post('nilai');
+			$idkunjungan=$this->session->kunjungan['id'];
+
+			//cek apakah kcp ini dan kunjungan sudah dinilai atau belum
+			$cek=$this->report->cek_report_by_kcp($kcp,$idkunjungan);
+
+			if($cek->num_rows()>0){
+				//jika sudah ada maka update
+				$update=$this->report->update_report_by_kcp($kcp,$nilai);
+
+				$id=$cek->row()->id;
+				
+	            $this->load->library('upload');
+
+	            $number_of_files_uploaded = count($_FILES['file']['name']);
+			    // Faking upload calls to $_FILE
+			    for ($i = 0; $i < $number_of_files_uploaded; $i++){
+			    	$_FILES['userfile']['name']     = $_FILES['file']['name'][$i];
+			      	$_FILES['userfile']['type']     = $_FILES['file']['type'][$i];
+			      	$_FILES['userfile']['tmp_name'] = $_FILES['file']['tmp_name'][$i];
+			      	$_FILES['userfile']['error']    = $_FILES['file']['error'][$i];
+			      	$_FILES['userfile']['size']     = $_FILES['file']['size'][$i];
+			      	$config['upload_path']          = './uploads/reportkcp/';
+					$config['allowed_types'] = 'gif|jpg|png';
+			      	
+			      	$this->upload->initialize($config);
+			      	if(! $this->upload->do_upload()){
+			      		$data = array('error' => $this->upload->display_errors());
+			      	}else{
+			      		$data = $this->upload->data();
+			      		$this->db->query("insert into file_report_kcp
+								(id_report_kcp,type_file,nama_file,user_id)
+								values('".$id."','".$this->upload->file_type."','".$this->upload->file_name."','".$iduser."')");
+			      	}
+			    }
+
+
+				$json=array('success'=>'true','pesan'=>'Data Berhasil diupdate','data'=>$data);
+			}else{
+				//jika belum ada maka simpan
+				$data=array(
+						'id_kcp'=>$kcp,
+						'id_daftar_laporan'=>$idkunjungan,
+						'index_nilai'=>$nilai,
+						'user_id'=>$iduser
+					);
+				$simpan=$this->report->save_report_by_kcp($data);
+		 		
+		 		$this->load->library('upload');
+
+	            $number_of_files_uploaded = count($_FILES['file']['name']);
+			    // Faking upload calls to $_FILE
+			    for ($i = 0; $i < $number_of_files_uploaded; $i++){
+			    	$_FILES['userfile']['name']     = $_FILES['file']['name'][$i];
+			      	$_FILES['userfile']['type']     = $_FILES['file']['type'][$i];
+			      	$_FILES['userfile']['tmp_name'] = $_FILES['file']['tmp_name'][$i];
+			      	$_FILES['userfile']['error']    = $_FILES['file']['error'][$i];
+			      	$_FILES['userfile']['size']     = $_FILES['file']['size'][$i];
+			      	$config['upload_path']          = './uploads/reportkcp/';
+					$config['allowed_types'] = 'gif|jpg|png';
+			      	
+			      	$this->upload->initialize($config);
+			      	if(! $this->upload->do_upload()){
+			      		$data = array('error' => $this->upload->display_errors());
+			      	}else{
+			      		$data = $this->upload->data();
+			      		$this->db->query("insert into file_report_kcp
+								(id_report_kcp,type_file,nama_file,user_id)
+								values('".$id."','".$this->upload->file_type."','".$this->upload->file_name."','".$iduser."')");
+			      	}
+			    }
+
+
+				$json=array('success'=>'true','pesan'=>'Data Berhasil disimpan','data'=>$data);
+			}
+
+			$this->response($json);
+		}
+	}
+
+	function delete_file_report_kcp_delete($id){
+		$this->report->delete_file_report_kcp($id);
+
+		$json=array('success'=>true,'pesan'=>'Data Berhasil dihapus');
+
+		$this->response($json);
+	}
+
+	function report_staff_by_person_get($id){
+		$report=$this->report->report_staff_by_person($id);
+
+		$this->response($report);
+	}
 	/* end report list kcp*/
 
 	/* staff */
@@ -915,4 +1048,12 @@ class Api extends REST_Controller{
 		$json=array('success'=>true,'pesan'=>'Data berhasil dihapus');
 	}
 	/* end staff */
+
+	function keterangan_get(){
+		$user = $this->ion_auth->user()->row();
+
+		echo "Nama : ".$this->session->kunjungan['nama']."<br>";
+		echo "Nama : ".$this->session->kunjungan['id']."<br>";
+		echo "ID User :".$user->id."<br>";
+	}
 }

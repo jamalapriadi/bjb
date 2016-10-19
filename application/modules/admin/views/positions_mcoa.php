@@ -32,7 +32,7 @@
                         <div ng-if="posisi.jenis=='Mcoa'">
                             <div class="form-group">
                                 <label for="">Pertanyaan</label>
-                                <input type="text" ng-model="pertanyaan" class="form-control">
+                                <input type="text" ng-model="$parent.pertanyaan" class="form-control">
                             </div>
 
                             <div class="form-group">
@@ -123,7 +123,7 @@
                             <tr>
                                 <th align="center" valign="middle">No.</th>
                                 <th align="center" valign="middle">Gender</th>
-                                <th align="center" valign="middle">Pertanyaan</th>
+                                <th align="center" valign="middle" width="75%">Pertanyaan</th>
                                 <th class="aksi" align="center" valign="middle">Aksi</th>
                             </tr>
                         </thead>

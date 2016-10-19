@@ -76,7 +76,7 @@ class Admin extends bjb_Controller{
 		$data['ctrl']="parameterMcoa";
 		$data['id']=$id;
 
-		$this->template->admin('category_mcoa',$data);		
+		$this->template->admin('parameter_mcoa',$data);		
 	}
 
 	function positions_mcoa($lokasi,$kategori){
@@ -175,6 +175,27 @@ class Admin extends bjb_Controller{
 		$data['ctrl']="reportKcp";
 
 		$this->template->admin('report_kcp',$data);
+	}
+
+	function report_staff_kcp($id){
+		$data['title']="Laporan Staff";
+		$data['ctrl']="reportStaffKcp";
+
+		$this->template->admin('report_staff_kcp',$data);
+	}
+
+	function report_fisik_kcp($id){
+		$data['title']="Laporan Fisik KCP";
+		$data['ctrl']="reportFisikKcp";
+
+		$this->template->admin('report_fisik_kcp',$data);
+	}
+
+	function report_staff_by_person($id){
+		$data['title']="Report Staff";
+		$data['ctrl']="reportStaffByPerson";
+
+		$this->template->admin('report_staff_by_person',$data);	
 	}
 
 	function login(){

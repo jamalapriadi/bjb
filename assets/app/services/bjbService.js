@@ -293,3 +293,27 @@ angular.module('bjbService',[])
 		}
 	}
 })
+
+.service('Report',function($http){
+	return {
+		staf_kcp_get(id){
+			return $http.get('../../api/report_staff_kcp/'+id);
+		},
+
+		fisik_kcp_get(id){
+			return $http.get('../../api/report_fisik_kcp/'+id);	
+		},
+
+		getKcpById:function(id){
+			return $http.get('../../api/report_by_kcp/'+id);
+		},
+
+		delete_file_report_kcp:function(id){
+			return $http.delete('../../api/delete_file_report_kcp/'+id);
+		},
+
+		report_staff_by_person:function(id){
+			return $http.get('../../api/report_staff_by_person/'+id)
+		}
+	}
+})

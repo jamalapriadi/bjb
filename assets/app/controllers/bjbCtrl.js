@@ -1800,3 +1800,148 @@ angular.module('bjbController',[])
         });
     };
 })
+
+.controller('reportStaffKcp',function($scope,$timeout,$filter,Report){
+    $scope.idkcp = $filter('_uriseg')(3);
+
+    $scope.hasil={};
+
+    console.log($scope.idkcp);
+
+    function get(){
+        Report.staf_kcp_get($scope.idkcp)
+            .success(function(data){
+                $scope.hasil=data;
+            })
+    }
+
+    get();
+})
+
+.controller('reportFisikKcp',function($scope,$timeout,$filter,Report){
+    $scope.idkcp = $filter('_uriseg')(3);
+
+    $scope.hasil={};
+
+    console.log($scope.idkcp);
+
+    function get(){
+        Report.fisik_kcp_get($scope.idkcp)
+            .success(function(data){
+                $scope.hasil=data;
+            })
+    }
+
+    get();
+})
+
+.controller('reportKcp',function($scope,$filter,$timeout,Upload,Report){
+    $scope.idkcp = $filter('_uriseg')(3);
+
+    $scope.items = [];
+    $scope.newitem = '';
+    $scope.jumlah=0;
+    $scope.berkas={};
+
+    $scope.kcp=[];
+
+    function getKcp(){
+        Report.getKcpById($scope.idkcp)
+            .success(function(data){
+                $scope.kcp=data.kcp;
+                $scope.nilai=parseInt(data.kcp.index_nilai);
+                $scope.berkas=data.file;
+            })
+    }
+
+    getKcp();
+
+    $scope.tambahPilihan=function(){
+        $scope.items.push($scope.items.length);
+        $scope.jumlah=$scope.jumlah+1;
+    }
+
+    $scope.del = function(i){
+        $scope.items.splice(i,1);
+        $scope.jumlah=$scope.jumlah-1;
+    }
+
+    function tampilPesan(){
+        $scope.showMessage=true; 
+        $timeout(function () { $scope.showMessage = false; }, 5000); 
+    }  
+
+    $scope.simpan=function(file){
+        var data={
+                kcp: this.kcp.id_kcp,
+                nilai:$scope.nilai, 
+                file: file
+            };
+        
+        console.log(data);
+        
+        file.upload = Upload.upload({
+            url: '../../api/upload_report_kcp',
+            data: data,
+        });
+
+        file.upload.then(function (response) {
+            $timeout(function () {
+                swal("Good job!", "Sukses Mengupdate Data!", "success");
+                getKcp();
+                tampilPesan();
+                file.result = response.pesan;
+            });
+        }, function (response) {
+            if (response.success > 0)
+                getKcp();
+                tampilPesan();
+                $scope.errorMsg = response.success + ': ' + response.pesan;
+        }, function (evt) {
+            // Math.min is to fix IE which reports 200% sometimes
+            file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
+        });
+    }
+
+    $scope.hapus=function(id){
+        swal({   
+            title: "Are you sure?",   
+            text: "Do you want to delete it?",   
+            type: "warning",   
+            showCancelButton: true,   
+            confirmButtonColor: "#DD6B55",   
+            confirmButtonText: "Yes, delete it!",   
+            cancelButtonText: "No",   
+            closeOnConfirm: false,   
+            closeOnCancel: false 
+        }, function(isConfirm){   
+            if (isConfirm) {     
+                Report.delete_file_report_kcp(id)
+                    .success(function(data){
+                        getKcp();
+                        $scope.pesan=data;
+                        swal("Deleted!", data.pesan, "success");   
+                    })
+            } else {     
+                swal("Cancelled", "Your data is safe :)", "error");   
+            } 
+        });
+    };
+
+})
+
+.controller('reportStaffByPerson',function($scope,$filter,Report){
+    $scope.idstaff = $filter('_uriseg')(3);
+    console.log($scope.idstaff);
+    $scope.hasil={};
+
+    function get(){
+        Report.report_staff_by_person($scope.idstaff)
+            .success(function(data){
+                $scope.hasil=data;
+                console.log(data);
+            })
+    }
+
+    get();
+})
