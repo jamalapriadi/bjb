@@ -1930,13 +1930,138 @@ angular.module('bjbController',[])
 
 })
 
-.controller('reportStaffByPerson',function($scope,$filter,Report){
+.controller('reportStaffByPerson',function($scope,$filter,$timeout,Report,Upload){
     $scope.idstaff = $filter('_uriseg')(3);
+    console.log($scope.idstaff);
+    $scope.hasil={};
+    $scope.kategori_parameter={};
+    $scope.kategori_komentar={};
+    $scope.detail_mcoa_parameter={};
+    $scope.mcoa_komentar={};
+
+    function get(){
+        Report.report_staff_by_person($scope.idstaff)
+            .success(function(data){
+                $scope.hasil=data;
+                $scope.nilai=parseInt(data.nilai);
+            })
+    }
+
+    get();
+
+    $scope.editorOptions = {
+        language: 'ru'
+        // uiColor: '#000000'
+    };
+    $scope.$on("ckeditor.ready", function( event ) {
+        $scope.isReady = true;
+    });
+
+    $scope.konten="<p style='text-align:center;'><strong>Summary</strong></p>"+
+        "<p style='text-align:center;'>Skenario shopper adalah menepon bank yang dituju dan memposisikan sebagai nasabah pada umumnya, shopper menanyakan produk bank bjb. Shopper melakukan evaluasi layanan telepon bank yang dituju</p>"+
+        "<p><strong>Sikap Transaksi</strong></p>"+
+        "<p>Secara keseluruhan sikap dan proses pelayanan petugas operator telepon ketika proses transaksi dengan konsumen dapat dikatakan kurang baik.</p>"+
+        "<ul>"+
+            "<li>Pada saat petama kali telepon ke cabang/cabang pembantu/ gerai bank bjb syariah 2 kali langsung tersambung dan 3 kali nada tunggu telepon langsung tersambung dengan memasukan no ext ke CS.</li>"+
+            "<li>Petugas mengucapkan bagian unit kerja, memperkenalkan diri, menawarkan bantuan, menanyakan nama nasabah, intonasi suara ramah dan menyebutkan nama nasabah selama transaksi. </li>"+
+            "<li>Petugas menanyakan kepada nasabah produk investasi yang diinginkan, menanyakan tujuan investasi dan jangka waktu investasi dan menjelaskan mengenai cara investasi. <span style='color:red'>akan tetapi petugas tidak menanyakan tentang produk yang nasabah miliki di bjb syariah.</span></li>"+
+            "<li>Petugas menjelaskan definisi produk investasi, persyaratan investasi, keuntungan investasi dan menjelaskan pilihan jenis/jangka waktu produk investasi. </li>"+
+            "<li>Petugas berbicara dengan jelas, menjelaskan dengan spontan dan menggunakan nama nasabah selama percakapan.</li>"+
+            "<li>Pada akhir percakapan petugas tidak menanyakan kejelasan materi, menegaskan produk apakan sudah sesuai dengan kebutuhan nasabah, menawarkan bantuan lain, pertugas mengucapkan terima kasih telah menghubungi bank bjb syariah, mengucapkan selamat beraktifitas kembali dan mengucapkan salam. <span style='color:red'>akan tetapi petugas tidak</span> mengedukasi nasabah mengenai call center (salam maslahah 1500727) dan menutup gagang telepon terlebih dahulu.</li>";
+
+
+    $scope.items=[];
+    $scope.itemsMistery=[];
+    $scope.jumlah=0;
+    $scope.jumlahMistery=0;
+
+    $scope.tambahFile=function(){
+        $scope.items.push($scope.items.length);
+        $scope.jumlah=$scope.jumlah+1;
+    }
+
+    $scope.tambahMistery=function(){
+        $scope.itemsMistery.push($scope.itemsMistery.length);
+        $scope.jumlahMistery=$scope.jumlahMistery+1;
+    }
+
+    $scope.del = function(i){
+        $scope.items.splice(i,1);
+        $scope.jumlah=$scope.jumlah-1;
+    }
+
+    $scope.delMysteri = function(i){
+        $scope.itemsMistery.splice(i,1);
+        $scope.jumlahMistery=$scope.jumlahMistery-1;
+    }
+
+    $scope.simpan=function(file,fileMistery,Video){
+        var data={
+            'kcp':this.hasil.id_kcp,
+            'staff':this.hasil.id_staff,
+            'posisi':this.hasil.id_posisi,
+            'nilai':$scope.nilai,
+            'kategori_parameter':$scope.kategori_parameter,
+            'ktegori_komentar':$scope.kategori_komentar,
+            'mcoa_komentar':$scope.mcoa_komentar,
+            'detail_mcoa_parameter':$scope.detail_mcoa_parameter,
+            'konten':$scope.konten,
+            'file':file,
+            'fileMistery':fileMistery,
+            'video':Video
+        }
+        console.log(data);  
+
+        File.upload = Upload.upload({
+            url: '../../api/save_report_staff_by_person',
+            data: data,
+        });
+
+        File.upload.then(function (response) {
+            $timeout(function () {
+                console.log(response);
+                swal("Good job!", "Sukses Mengupdate Data!", "success");
+                File.result = response.pesan;
+            });
+        }, function (response) {
+            if (response.success > 0)
+                $scope.errorMsg = response.success + ': ' + response.pesan;
+        }, function (evt) {
+            // Math.min is to fix IE which reports 200% sometimes
+            File.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
+        });
+        
+        /*
+        file.upload = Upload.upload({
+            url: '../api/save_report_staff_by_person/',
+            method:'post',
+            data: {
+                kcp:this.hasil.id_kcp,
+                staff:this.hasil.id_staff,
+                posisi:this.hasil.id_posisi,
+                nilai:$scope.nilai,
+                kategori_parameter:$scope.kategori_parameter,
+                ktegori_komentar:$scope.kategori_komentar,
+                mcoa_komentar:$scope.mcoa_komentar,
+                detail_mcoa_parameter:$scope.detail_mcoa_parameter,
+                konten:$scope.konten,
+                file:File,
+                fileMistery:fileMistery,
+                video:Video
+            },
+        });
+        */
+    }
+})
+
+.controller('reportFisikByKcp',function($scope,$filter,Report){
+    $scope.idfisik = $filter('_uriseg')(3);
+    $scope.idkcp = $filter('_uriseg')(4);
     console.log($scope.idstaff);
     $scope.hasil={};
 
     function get(){
-        Report.report_staff_by_person($scope.idstaff)
+        Report.report_fisik_by_kcp($scope.idfisik,$scope.idkcp)
             .success(function(data){
                 $scope.hasil=data;
                 console.log(data);

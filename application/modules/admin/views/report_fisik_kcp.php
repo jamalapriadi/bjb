@@ -38,7 +38,7 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <a href="#" class="btn btn-sm btn-xs btn-primary">
+                                    <a href="<?php echo site_url();?>admin/report_fisik_by_kcp/{{r.id_fisik}}/{{r.id_kcp}}" class="btn btn-sm btn-xs btn-primary">
                                         <i class="fa fa-bar-chart-o"></i>
                                     </a>
                                 </td>

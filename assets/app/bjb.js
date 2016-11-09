@@ -1,4 +1,4 @@
-var bjbApp=angular.module('bjbApp',['bjbController','bjbService','ngLoadingSpinner','datatables','ngAnimate','ngResource','ui.select2','ngFileUpload','ngSanitize','daterangepicker'])
+var bjbApp=angular.module('bjbApp',['bjbController','bjbService','ngLoadingSpinner','datatables','ngAnimate','ngResource','ui.select2','ngFileUpload','ngSanitize','daterangepicker','ngCkeditor'])
 
 bjbApp.filter('_uriseg', function($location) {
   return function(segment) {

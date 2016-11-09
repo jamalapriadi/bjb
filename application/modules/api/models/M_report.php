@@ -179,6 +179,16 @@ class M_report extends CI_Model{
 		}
 	}
 
+	function report_detail_parameter($id){
+		$detail=$this->db->query("select * from detail_parameter where id_parameter='".$id."'")->result();
+
+		if(count($detail)>0){
+			return $detail;
+		}else{
+			return null;
+		}
+	}
+
 	function report_detail_posisi_kategori($id){
 		$query=$this->db->query("SELECT * FROM mcoa_kategori where id_posisi='".$id."' and jenis='Kategori'")->result();
 
@@ -203,21 +213,117 @@ class M_report extends CI_Model{
 			and id_kategori='".$kategori."'")->result();
 
 		if(count($param)>0){
-			return $param;
+			$data=array();
+
+			foreach($param as $row){
+				$data[]=array(
+						'id_parameter'=>$row->id_parameter,
+						'id_kategori'=>$row->id_kategori,
+						'id_posisi'=>$row->id_posisi,
+						'id_fisik'=>$row->id_fisik,
+						'gender'=>$row->gender,
+						'nama_parameter'=>$row->nama_parameter,
+						'detail'=>$this->detail_parameter_by_id($row->id_parameter)
+					);
+			}
+
+			return $data;
 		}else{
 			return null;
 		}
 	}
 
-	function report_fisik_by_kcp($id){
-		return;
+	function detail_parameter_by_id($id){
+		$detail=$this->db->query("select * from detail_parameter where id_parameter='".$id."'")->result();
+
+		if(count($detail)>0){
+			return $detail;
+		}else{
+			return null;
+		}
+	}
+
+	function report_fisik_by_kcp($fisik,$kcp){
+		$fisik=$this->db->query("select a.*,b.nama_fisik,c.nama_kcp, d.index_nilai from fisik_kcp a 
+				left join fisik b on b.id_fisik=a.id_fisik
+				left join kcp c on c.id_kcp=a.id_kcp
+				left join laporan_staff_or_fisik d on d.id_kcp=a.id_kcp and d.id_fisik=a.id_fisik
+				where a.id_fisik='".$fisik."' and a.id_kcp='".$kcp."'")->row();
+
+		$data=array(
+				'id'=>$fisik->id,
+				'id_fisik'=>$fisik->id_fisik,
+				'id_kcp'=>$fisik->id_kcp,
+				'nama_fisik'=>$fisik->nama_fisik,
+				'nama_kcp'=>$fisik->nama_kcp,
+				'nilai'=>$fisik->index_nilai,
+				'kategori'=>$this->report_detail_fisik_kategori($fisik->id_fisik),
+				'mcoa'=>$this->report_detail_fisik_mcoa($fisik->id_fisik)
+			);
+
+		return $data;
 	}
 
 	function report_detail_fisik_kategori($id){
-		return;
+		$query=$this->db->query("SELECT * FROM mcoa_kategori where id_fisik='".$id."' and jenis='Kategori'")->result();
+
+		if(count($query)>0){
+			$data=array();
+			foreach($query as $row){
+				$data[]=array(
+						'id_kategori'=>$row->id_kategori,
+						'nama_kategori'=>$row->nama_kategori,
+						'parameter'=>$this->report_parameter_fisik_by_kategori($id,$row->id_kategori)
+					);
+			}
+
+			return $data;
+		}else{
+			return NULL;
+		}
 	}
 
-	function report_parameter_fisik_by_kategori($posisi,$kategori){
-		return;
+	function report_detail_fisik_mcoa($id){
+		$query=$this->db->query("SELECT * FROM mcoa_kategori where id_fisik='".$id."' and jenis='Mcoa'")->result();
+
+		if(count($query)>0){
+			$data=array();
+			foreach($query as $row){
+				$data[]=array(
+						'id_kategori'=>$row->id_kategori,
+						'nama_kategori'=>$row->nama_kategori,
+						'parameter'=>$this->report_parameter_fisik_by_kategori($id,$row->id_kategori)
+					);
+			}
+
+			return $data;
+		}else{
+			return NULL;
+		}
+	}
+
+	function report_parameter_fisik_by_kategori($fisik,$kategori){
+		$param=$this->db->query("select * from parameter where id_fisik='".$fisik."'
+			and id_kategori='".$kategori."'")->result();
+
+		if(count($param)>0){
+			$data=array();
+
+			foreach($param as $row){
+				$data[]=array(
+						'id_parameter'=>$row->id_parameter,
+						'id_kategori'=>$row->id_kategori,
+						'id_posisi'=>$row->id_posisi,
+						'id_fisik'=>$row->id_fisik,
+						'gender'=>$row->gender,
+						'nama_parameter'=>$row->nama_parameter,
+						'detail'=>$this->detail_parameter_by_id($row->id_parameter)
+					);
+			}
+
+			return $data;
+		}else{
+			return null;
+		}
 	}
 }

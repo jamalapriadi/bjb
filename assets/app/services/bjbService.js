@@ -314,6 +314,10 @@ angular.module('bjbService',[])
 
 		report_staff_by_person:function(id){
 			return $http.get('../../api/report_staff_by_person/'+id)
+		},
+
+		report_fisik_by_kcp:function(fisik,kcp){
+			return $http.get('../../../api/report_fisik_by_kcp/'+fisik+'/'+kcp)
 		}
 	}
 })

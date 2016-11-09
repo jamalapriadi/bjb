@@ -185,10 +185,17 @@ class Admin extends bjb_Controller{
 	}
 
 	function report_fisik_kcp($id){
-		$data['title']="Laporan Fisik KCP";
+		$data['title']="Report KCP Fisik";
 		$data['ctrl']="reportFisikKcp";
 
 		$this->template->admin('report_fisik_kcp',$data);
+	}
+
+	function report_fisik_by_kcp($id){
+		$data['title']="Report KCP Fisik";
+		$data['ctrl']="reportFisikByKcp";
+
+		$this->template->admin('report_fisik_by_kcp',$data);
 	}
 
 	function report_staff_by_person($id){

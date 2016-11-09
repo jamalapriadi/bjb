@@ -174,6 +174,130 @@ class Api extends REST_Controller{
 		$this->response($data);
 	}
 
+	function save_report_staff_by_person_post(){
+		$this->form_validation->set_data($this->post());
+
+		$this->form_validation->set_rules('kcp','Kcp','required');
+		$this->form_validation->set_rules('staff','Staff','required');
+		$this->form_validation->set_rules('posisi','Posisi','required');
+		$this->form_validation->set_rules('nilai','Nilai','required');
+
+		if($this->form_validation->run()==true){
+			$user = $this->ion_auth->user()->row();
+
+			//cek dulu sudah ada atau belum
+			$cek=$this->db->query("select * from laporan_staff_or_fisik
+				where id_kcp='".$this->post('kcp')."'
+				and id_staff='".$this->post('staff')."'
+				and id_daftar_laporan='".$this->session->kunjungan['id']."'")->row();
+
+			if(count($cek)>0){
+				//update
+				$updatereport=$this->db->query("update laporan_staff_or_fisik set index_nilai='".$this->post('nilai')."'
+						where id='".$cek->id."'");
+
+				$this->load->library('upload');
+
+				//jika ada file
+				if(!empty($_FILES['file']['name'])){
+					$number_of_files_uploaded = count($_FILES['file']['name']);
+				    
+				    for ($i = 0; $i < $number_of_files_uploaded; $i++){
+				    	$_FILES['userfile']['name']     = $_FILES['file']['name'][$i];
+				      	$_FILES['userfile']['type']     = $_FILES['file']['type'][$i];
+				      	$_FILES['userfile']['tmp_name'] = $_FILES['file']['tmp_name'][$i];
+				      	$_FILES['userfile']['error']    = $_FILES['file']['error'][$i];
+				      	$_FILES['userfile']['size']     = $_FILES['file']['size'][$i];
+
+				      	$config['upload_path']          = './uploads/file/';
+						$config['allowed_types'] = 'gif|jpg|png';
+				      	
+				      	$this->upload->initialize($config);
+				      	if(! $this->upload->do_upload()){
+				      		$pesanfile=$this->upload->display_errors();
+				      	}else{
+				      		$data = $this->upload->data();
+				      		$this->db->query("insert into file_report_kcp
+									(id_report_kcp,type_file,nama_file,tipe,user_id)
+									values('".$cek->id."','".$this->upload->file_type."','".$this->upload->file_name."',
+									'File','".$user->id."')");
+				      		$pesanfile="Berhasil diupload file";
+				      	}
+				    }
+				}else{
+					$pesanfile="Tidak ada file yang dipilih";
+				}
+				
+
+				//jika ada video
+			    $video['upload_path']          = './uploads/video/';
+				$video['allowed_types']        = 'gif|jpg|png';
+				$video['max_size']             = 100;
+				$video['max_width']            = 1024;
+				$video['max_height']           = 768;
+
+				$this->upload->initialize($video);
+
+				if ( $this->upload->do_upload('video')){
+					$data=$this->upload->data();
+
+					$savevideo=$this->db->query("insert into file_report_kcp 
+						(id_report_kcp,type_file,nama_file,tipe,user_id)
+						values('".$cek->id."','".$data['file_type']."','".$data['file_name']."',
+						'Video','".$user->id."')");
+					$pesanvideo="Video Berhasil diupload";
+				}else{
+					$pesanvideo=$this->upload->display_errors();
+				}
+
+
+				//jika ada misterycaller
+				if(!empty($_FILES['fileMistery']['name'])){
+					$number_of_files_uploaded = count($_FILES['fileMistery']['name']);
+				    
+				    for ($i = 0; $i < $number_of_files_uploaded; $i++){
+				    	$_FILES['userfile']['name']     = $_FILES['fileMistery']['name'][$i];
+				      	$_FILES['userfile']['type']     = $_FILES['fileMistery']['type'][$i];
+				      	$_FILES['userfile']['tmp_name'] = $_FILES['fileMistery']['tmp_name'][$i];
+				      	$_FILES['userfile']['error']    = $_FILES['fileMistery']['error'][$i];
+				      	$_FILES['userfile']['size']     = $_FILES['fileMistery']['size'][$i];
+
+				      	$config['upload_path']          = './uploads/mistery/';
+						$config['allowed_types'] = 'gif|jpg|png';
+				      	
+				      	$this->upload->initialize($config);
+				      	if(! $this->upload->do_upload()){
+				      		$pesanmistery=$this->upload->display_errors();
+				      	}else{
+				      		$data = $this->upload->data();
+				      		$this->db->query("insert into file_report_kcp
+									(id_report_kcp,type_file,nama_file,tipe,user_id)
+									values('".$cek->id."','".$this->upload->file_type."','".$this->upload->file_name."',
+									'File Mistery','".$user->id."')");
+				      		$pesanmistery="Berhasil diupload Mistery File";
+				      	}
+				    }
+				}else{
+					$pesanmistery="Tidak ada mistery file";
+				}
+				
+
+				$json=array('success'=>true,
+					'pesan'=>'Data Berhasil disimpan, Update',
+					'video'=>$pesanvideo,
+					'pesanfile'=>$pesanfile,
+					'pesanMistery'=>$pesanmistery);
+			}else{
+				//insert new
+				$json=array('success'=>true,'pesan'=>'Data Berhasil disimpan, Insert new');
+			}
+		}else{
+			$json=array('success'=>false,'pesan'=>'Data Gagal disimpan, Data tidak lengkap');
+		}
+
+		$this->response($json);
+	}
+
 	function kcp_post(){
 		$this->form_validation->set_data($this->post());
 
@@ -1048,6 +1172,12 @@ class Api extends REST_Controller{
 		$json=array('success'=>true,'pesan'=>'Data berhasil dihapus');
 	}
 	/* end staff */
+
+	function report_fisik_by_kcp_get($fisik,$kcp){
+		$report=$this->report->report_fisik_by_kcp($fisik,$kcp);
+
+		$this->response($report);		
+	}
 
 	function keterangan_get(){
 		$user = $this->ion_auth->user()->row();
