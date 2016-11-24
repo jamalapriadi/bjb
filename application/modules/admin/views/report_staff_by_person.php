@@ -44,18 +44,33 @@
                             <table class="table table-bordered">
                                 <tr ng-repeat="p in k.parameter">
                                     <td style="width:10%">
-                                        <select class="form-control" name="parameter[]" ng-model="$parent.kategori_parameter[p.id_parameter]">
-                                            <option value="N/A" selected="selected">N/A</option>
-                                            <option value="Ya">Ya</option>
-                                            <option value="Tidak">Tidak</option>
-                                        </select> 
+                                        <div ng-if="p.report!=null">
+                                            <select name="parameter" ng-model="$parent.parameter[p.id_parameter]" 
+                                             ng-init="$parent.parameter[p.id_parameter] = pilihans[p.report.id]" 
+                                            class="form-control" ng-options="pil.id for pil in pilihans">
+                                            </select>
+                                        </div>
+
+                                        <div ng-if="p.report==null">
+                                            <select name="parameter" ng-model="$parent.parameter[p.id_parameter]" 
+                                            ng-init="$parent.parameter[p.id_parameter] = pilihans[0]" 
+                                            class="form-control" ng-options="pil.id for pil in pilihans">
+                                            </select>
+                                        </div>
                                     </td>
                                     <td style="width:40%">{{p.nama_parameter}}</td>
                                     <td>
-                                        <input type="text" class="form-control" placeholder="Komentar" ng-model="$parent.kategori_komentar[p.id_parameter]">
+                                        <input type="text" class="form-control" placeholder="Komentar" ng-model="$parent.komentar[p.id_parameter]" ng-init="$parent.komentar[p.id_parameter]=p.report.komentar">
                                     </td>
                                 </tr>
                             </table>
+                        </div>
+
+                        <div ng-if="hasil.mcoa.length==null">
+                            <div class="alert alert-warning alert-dismissable" style="margin-top: 20px">
+                                <i class="glyphicon glyphicon-warning-sign"></i>
+                                Belum ada mcoa untuk kategori ini.
+                            </div>
                         </div>
 
                         <div ng-repeat="m in hasil.mcoa">
@@ -74,14 +89,14 @@
                                             <div ng-repeat="d in p.detail" class="form-group">
                                                 <div class="radio">
                                                     <label for="">
-                                                        <input name="mcoa[{{p.id_parameter}}]" type="radio" ng-model="$parent.detail_mcoa_parameter[p.id_parameter]" ng-value="d.id">
+                                                        <input name="mcoa[{{p.id_parameter}}]" type="radio" ng-model="$parent.mcoa[p.id_parameter]" ng-value="d.id">
                                                         {{d.pilihan}}                                                 
                                                     </label>
                                                 </div>
                                             </div>
                                         </td>
                                         <td class="text-center" style="width: 50%;top:50%;" valign="center">
-                                            <input class="form-control" placeholder="Komentar..." maxlength="255" name="mcoa_komentar[]" type="text" ng-model="$parent.mcoa_komentar[p.id_parameter]">
+                                            <input class="form-control" placeholder="Komentar..." maxlength="255" name="mcoa_komentar[p.id_parameter]" type="text" ng-model="$parent.mcoa_komentar[p.id_parameter]">
                                         </td>
 
                                     </tr>
@@ -92,25 +107,25 @@
                         <div class="form-group">
                             <label for="">Konten</label>
                             <div ng-cloak ng-show="isReady">
-                                <textarea ckeditor="editorOptions" name="editor" ng-model="konten"></textarea>
+                                <textarea ckeditor="editorOptions" name="editor" ng-model="konten" ng-value="konten"></textarea>
                             </div>
                         </div>
                         
                         <div class="form-group">
                             <label for="file" class="control-label">Video</label>
-                            <input type="file" ngf-select ng-model="Video" name="file" required ngf-model-invalid="errorFile" class="form-control">
+                            <input type="file" ngf-select ng-model="Video" name="file" ngf-model-invalid="errorFile" class="form-control">
                         </div>
 
                         <div class="form-group">
                             <label for="file" class="control-label">File</label>
-                            <input type="file" ngf-select ng-model="file[0]" name="file" required ngf-model-invalid="errorFile" class="form-control">
+                            <input type="file" ngf-select ng-model="file[0]" name="file" ngf-model-invalid="errorFile" class="form-control">
                         </div>
 
                         <div ng-repeat='item in items track by $index'>
                             <div class="form-group">
                                 <div class="input-group">
                                     <input type="file" ngf-select ng-model="file[$index+1]" name="file"
-                                        required ngf-model-invalid="errorFile" class="form-control">
+                                        ngf-model-invalid="errorFile" class="form-control">
                                     <span class="input-group-addon" ng-click="del($parent.$index)">
                                         <i class="fa fa-trash"></i>
                                     </span>
@@ -127,14 +142,14 @@
 
                         <div class="form-group">
                             <label for="file" class="control-label">Mistery Caller</label>
-                            <input type="file" ngf-select ng-model="fileMistery[0]" name="file" required ngf-model-invalid="errorFile" class="form-control">
+                            <input type="file" ngf-select ng-model="fileMistery[0]" name="file" ngf-model-invalid="errorFile" class="form-control">
                         </div>
 
                         <div ng-repeat='item in itemsMistery track by $index'>
                             <div class="form-group">
                                 <div class="input-group">
                                     <input type="file" ngf-select ng-model="fileMistery[$index+1]" name="file"
-                                        required ngf-model-invalid="errorFile" class="form-control">
+                                        ngf-model-invalid="errorFile" class="form-control">
                                     <span class="input-group-addon" ng-click="delMistery($index)">
                                         <i class="fa fa-trash"></i>
                                     </span>
@@ -151,7 +166,7 @@
 
                         <div class="form-group">
                             <button class="btn btn-save btn-primary" ng-click="simpan(file,fileMistery,Video)">Simpan</button>
-                            <a href="http://ms-bjbsyariah.com/admin/reports/list/kcp" class="btn btn-default">Batal</a>
+                            <a href="#" class="btn btn-default">Batal</a>
                         </div>
                     </form>
                     
@@ -164,4 +179,40 @@
             </div>
         </div>
     </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="box box-primary">
+                <div class="box-header">
+                    <h3 class="box-title">File Yang Diupload</h3>
+                </div><!-- /.box-header -->
+
+                <div class="box-body">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th class="text-center">No</th>
+                                <th class="text-center">Tipe</th>
+                                <th class="text-center">Nama</th>
+                                <th class="text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="f in hasil.file">
+                                <td>{{$index+1}}</td>
+                                <td>{{f.tipe}}</td>
+                                <td>{{f.nama_file}}</td>
+                                <td>
+                                    <a href="#" ng-click="hapusfile(f.id)" class="btn btn-sm btn-danger">
+                                        <i class="fa fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div><!-- /.box-body -->
+            </div><!-- /.box -->
+        </div>
+    </div>
+
 </section>

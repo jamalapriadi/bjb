@@ -25,9 +25,11 @@
                                     <a href="<?php echo site_url();?>admin/parameter_category/{{r.id_posisi}}" class="btn btn-xs btn-sm btn-success" title="Kategori Parameter">
                                         <i class="fa fa-tags"></i>
                                     </a>
+                                    <!--
                                     <a href="#" class="btn btn-xs btn-sm btn-primary" title="Detail">
                                         <i class="fa fa-eye"></i>
                                     </a>
+                                    -->
                                     <a href="#" class="btn btn-xs btn-sm btn-warning" ng-click="form('edit',r.id_posisi)" title="Edit">
                                         <i class="fa fa-edit"></i>
                                     </a>

@@ -262,6 +262,19 @@ angular.module('bjbService',[])
 		categoryMcoaFisik:function(data){
 			return $http.post('../../../api/categoryMcoaFisiknya',data);
 		},
+
+		cari_fisik_by_id:function(id){
+			return $http.get('../../../api/cari_fisik_by_id/'+id);
+		},
+
+		update_parameter_by_id:function(id,data){
+			return $http({
+                method:'PUT',
+                url:'../../../api/update_parameter_by_id/'+id,
+                headers:{'Content-Type':'application/x-www-form-urlencoded'},
+                data:$.param(data)
+            });
+		},
 	}
 })
 

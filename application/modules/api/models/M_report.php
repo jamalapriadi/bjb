@@ -10,7 +10,7 @@ class M_report extends CI_Model{
 		$this->db->select('kcp.id_kcp,nama_kcp,cabang.nama_cabang,report_kcp.index_nilai');
 		$this->db->from('kcp');
 		$this->db->join('cabang','cabang.id_cabang=kcp.id_cabang','left');
-		$this->db->join('report_kcp','kcp.id_kcp=report_kcp.id_kcp','left');
+		$this->db->join('report_kcp','kcp.id_kcp=report_kcp.id_kcp and report_kcp.id_daftar_laporan='.$this->session->kunjungan['id'],'left');
 
 		return $this->db->get()->result();
 	}
@@ -137,27 +137,51 @@ class M_report extends CI_Model{
 		$this->db->delete('file_report_kcp');
 	}
 
-	function report_staff_by_person($id){
-		$staff=$this->db->query("SELECT a.*, b.nama_kcp, c.nama_posisi, d.index_nilai from staff a 
-				join kcp b on b.id_kcp=a.id_kcp
-				join posisi c on c.id_posisi=a.id_posisi
-				left join laporan_staff_or_fisik d on d.id_staff=a.id_staff
-				where a.id_staff='".$id."'")->row();
+	function report_staff_by_person($id)
+	{
+		//cek apakah dia sudah dinilai atau belum
+		$staff=$this->db->query("SELECT a.*, b.nama_kcp, c.nama_posisi, d.index_nilai, d.summary
+					from staff a 
+					join kcp b on b.id_kcp=a.id_kcp
+					join posisi c on c.id_posisi=a.id_posisi
+					left join laporan_staff_or_fisik d on d.id_staff=a.id_staff
+					where a.id_staff='".$id."'")->row();
 
 		$data=array(
-				'id_staff'=>$staff->id_staff,
-				'id_kcp'=>$staff->id_kcp,
-				'id_posisi'=>$staff->id_posisi,
-				'nama_staff'=>$staff->nama_staff,
-				'gender'=>$staff->gender,
-				'nama_kcp'=>$staff->nama_kcp,
-				'nama_posisi'=>$staff->nama_posisi,
-				'nilai'=>$staff->index_nilai,
-				'kategori'=>$this->report_detail_posisi_kategori($staff->id_posisi),
-				'mcoa'=>$this->report_detail_posisi_mcoa($staff->id_posisi)
-			);
+					'id_staff'=>$staff->id_staff,
+					'id_kcp'=>$staff->id_kcp,
+					'id_posisi'=>$staff->id_posisi,
+					'nama_staff'=>$staff->nama_staff,
+					'gender'=>$staff->gender,
+					'nama_kcp'=>$staff->nama_kcp,
+					'nama_posisi'=>$staff->nama_posisi,
+					'nilai'=>$staff->index_nilai,
+					'summary'=>$staff->summary,
+					'file'=>$this->get_file_staff($staff->id_staff),
+					'kategori'=>$this->report_detail_posisi_kategori($staff->id_posisi),
+					'mcoa'=>$this->report_detail_posisi_mcoa($staff->id_posisi)
+				);
 
 		return $data;
+	}
+
+	function get_file_staff($staff)
+	{
+		$lap=$this->db->query("
+			select id, id_staff,id_daftar_laporan from
+			laporan_staff_or_fisik where 
+			id_daftar_laporan='".$this->session->kunjungan['id']."'
+			and id_staff='".$staff."'
+		")->row();
+
+		if(count($lap)>0){
+			$file=$this->db->query("select id,type_file,nama_file,tipe from file_report_kcp 
+			where id_laporan_staff_fisik='".$lap->id."'")->result();
+
+			return $file;
+		}else{
+			return null;
+		}
 	}
 
 	function report_detail_posisi_mcoa($id){
@@ -223,7 +247,8 @@ class M_report extends CI_Model{
 						'id_fisik'=>$row->id_fisik,
 						'gender'=>$row->gender,
 						'nama_parameter'=>$row->nama_parameter,
-						'detail'=>$this->detail_parameter_by_id($row->id_parameter)
+						'detail'=>$this->detail_parameter_by_id($row->id_parameter),
+						'report'=>$this->report_parameter_kat($row->id_parameter)
 					);
 			}
 
@@ -231,6 +256,18 @@ class M_report extends CI_Model{
 		}else{
 			return null;
 		}
+	}
+
+	function report_parameter_kat($id){
+		$query=$this->db->query("select jawaban,(case
+				when jawaban='N/A' then 0
+				when jawaban='Ya' then 1
+				when jawaban='Tidak' then 2
+			end) as id,komentar from report_mcoa_kategori 
+			where kategori_id='$id'
+			and id_kunjungan='".$this->session->kunjungan['id']."'")->row();
+
+			return $query;
 	}
 
 	function detail_parameter_by_id($id){
@@ -317,7 +354,8 @@ class M_report extends CI_Model{
 						'id_fisik'=>$row->id_fisik,
 						'gender'=>$row->gender,
 						'nama_parameter'=>$row->nama_parameter,
-						'detail'=>$this->detail_parameter_by_id($row->id_parameter)
+						'detail'=>$this->detail_parameter_by_id($row->id_parameter),
+						'report'=>$this->report_parameter_kat($row->id_parameter)
 					);
 			}
 
@@ -325,5 +363,18 @@ class M_report extends CI_Model{
 		}else{
 			return null;
 		}
+	}
+
+	function report_parameter_fisik($parameter)
+	{
+		$query=$this->db->query("select jawaban,(case
+				when jawaban='N/A' then 0
+				when jawaban='Ya' then 1
+				when jawaban='Tidak' then 2
+			end) as id,komentar from report_mcoa_kategori 
+			where kategori_id='$id'
+			and id_kunjungan='".$this->session->kunjungan['id']."'")->row();
+
+			return $query;
 	}
 }

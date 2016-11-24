@@ -174,7 +174,8 @@ class Api extends REST_Controller{
 		$this->response($data);
 	}
 
-	function save_report_staff_by_person_post(){
+	function save_report_staff_by_person_post()
+	{
 		$this->form_validation->set_data($this->post());
 
 		$this->form_validation->set_rules('kcp','Kcp','required');
@@ -182,8 +183,17 @@ class Api extends REST_Controller{
 		$this->form_validation->set_rules('posisi','Posisi','required');
 		$this->form_validation->set_rules('nilai','Nilai','required');
 
-		if($this->form_validation->run()==true){
+		if($this->form_validation->run()==true)
+		{
 			$user = $this->ion_auth->user()->row();
+			$kcp=$this->post('kcp');
+			$staff=$this->post('staff');
+			$nilai=$this->post('nilai');
+			$parameter=$this->post('parameter');
+			$komentar=$this->post('komentar');
+			$mcoa=$this->post('mcoa');
+			$mcoa_komentar=$this->post('mcoa_komentar');
+			$konten=$this->post('konten');
 
 			//cek dulu sudah ada atau belum
 			$cek=$this->db->query("select * from laporan_staff_or_fisik
@@ -191,10 +201,44 @@ class Api extends REST_Controller{
 				and id_staff='".$this->post('staff')."'
 				and id_daftar_laporan='".$this->session->kunjungan['id']."'")->row();
 
-			if(count($cek)>0){
-				//update
-				$updatereport=$this->db->query("update laporan_staff_or_fisik set index_nilai='".$this->post('nilai')."'
+			if(count($cek)>0)
+			{
+				//update laporan staff or fisik
+				$updatereport=$this->db->query("update laporan_staff_or_fisik 
+				set index_nilai='".$this->post('nilai')."',
+						summary='".$konten."'
 						where id='".$cek->id."'");
+				
+				//update data parameter
+				if(count($parameter)>0)
+				{
+					foreach($parameter as $key=>$val)
+					{
+
+						$this->db->query("update report_mcoa_kategori 
+							set jawaban='".$val['id']."',
+							komentar='".$komentar[$key]."'
+							where kategori_id='".$key."'
+							and id_kunjungan='".$this->session->kunjungan['id']."'
+							and id_laporan_staff_or_fisik='".$cek->id."'"
+						);
+					}
+				}
+
+				//update data mcoa
+				if(count($mcoa)>0)
+				{
+					foreach($mcoa as $key=>$val)
+					{
+						$this->db->query("update report_mcoa_kategori 
+							set jawaban='".$val['id']."',
+							komentar='".$komentar[$key]."'
+							where mcoa_id='".$key."'
+							and id_kunjungan='".$this->session->kunjungan['id']."'
+							and id_laporan_staff_fisik='".$cek->id."'"
+						);
+					}
+				}
 
 				$this->load->library('upload');
 
@@ -218,7 +262,7 @@ class Api extends REST_Controller{
 				      	}else{
 				      		$data = $this->upload->data();
 				      		$this->db->query("insert into file_report_kcp
-									(id_report_kcp,type_file,nama_file,tipe,user_id)
+									(id_laporan_staff_fisik,type_file,nama_file,tipe,user_id)
 									values('".$cek->id."','".$this->upload->file_type."','".$this->upload->file_name."',
 									'File','".$user->id."')");
 				      		$pesanfile="Berhasil diupload file";
@@ -242,7 +286,7 @@ class Api extends REST_Controller{
 					$data=$this->upload->data();
 
 					$savevideo=$this->db->query("insert into file_report_kcp 
-						(id_report_kcp,type_file,nama_file,tipe,user_id)
+						(id_laporan_staff_fisik,type_file,nama_file,tipe,user_id)
 						values('".$cek->id."','".$data['file_type']."','".$data['file_name']."',
 						'Video','".$user->id."')");
 					$pesanvideo="Video Berhasil diupload";
@@ -271,7 +315,7 @@ class Api extends REST_Controller{
 				      	}else{
 				      		$data = $this->upload->data();
 				      		$this->db->query("insert into file_report_kcp
-									(id_report_kcp,type_file,nama_file,tipe,user_id)
+									(id_laporan_staff_fisik,type_file,nama_file,tipe,user_id)
 									values('".$cek->id."','".$this->upload->file_type."','".$this->upload->file_name."',
 									'File Mistery','".$user->id."')");
 				      		$pesanmistery="Berhasil diupload Mistery File";
@@ -283,19 +327,172 @@ class Api extends REST_Controller{
 				
 
 				$json=array('success'=>true,
-					'pesan'=>'Data Berhasil disimpan, Update',
+					'header'=>'Sukses',
+					'pesan'=>'Data Berhasil disimpan',
 					'video'=>$pesanvideo,
 					'pesanfile'=>$pesanfile,
 					'pesanMistery'=>$pesanmistery);
-			}else{
+			}else
+			{
+				$konten=$this->post('konten');
+
 				//insert new
-				$json=array('success'=>true,'pesan'=>'Data Berhasil disimpan, Insert new');
+				$lap=$this->db->query("insert into laporan_staff_or_fisik
+					(id_kcp,id_staff,id_daftar_laporan,index_nilai,user_id,summary)
+					values('".$kcp."','".$staff."','".$this->session->kunjungan['id']."',
+					'".$nilai."','".$user->id."','".$konten."')");
+
+				$insert_id = $this->db->insert_id();
+
+				//insert data parameter
+				if(count($parameter)>0)
+				{
+					foreach($parameter as $key=>$val)
+					{
+						if(isset($komentar[$key])) { 
+							$b=$komentar[$key]; 
+						}else{
+							$b="";
+						}
+
+						$this->db->query("insert into 
+						report_mcoa_kategori (id_laporan_staff_or_fisik,kategori_id,jawaban,komentar,id_kunjungan,user_id,created_at)
+						values('".$insert_id."','".$key."','".$val['id']."',
+						'".$b."',
+						'".$this->session->kunjungan['id']."',
+						'".$user->id."','".date('Y-m-d')."')
+						");
+					}
+				}
+
+				//insert data mcoa
+				if(count($mcoa)>0)
+				{
+					foreach($mcoa as $key=>$val)
+					{
+						if(isset($komentar[$key])){ 
+							$b=$komentar[$key]; 
+						}else{
+							$b="";
+						}
+
+						$this->db->query("insert into 
+						report_mcoa_kategori (id_laporan_staff_or_fisik,mcoa_id,jawaban,komentar,id_kunjungan,user_id,created_at)
+						values('".$insert_id."','".$key."','".$val['id']."',
+						'".$b."',
+						'".$this->session->kunjungan['id']."',
+						'".$user->id."','".date('Y-m-d')."')
+						");
+					}
+				}
+
+				$this->load->library('upload');
+
+				//jika ada file
+				if(!empty($_FILES['file']['name'])){
+					$number_of_files_uploaded = count($_FILES['file']['name']);
+				    
+				    for ($i = 0; $i < $number_of_files_uploaded; $i++){
+				    	$_FILES['userfile']['name']     = $_FILES['file']['name'][$i];
+				      	$_FILES['userfile']['type']     = $_FILES['file']['type'][$i];
+				      	$_FILES['userfile']['tmp_name'] = $_FILES['file']['tmp_name'][$i];
+				      	$_FILES['userfile']['error']    = $_FILES['file']['error'][$i];
+				      	$_FILES['userfile']['size']     = $_FILES['file']['size'][$i];
+
+				      	$config['upload_path']          = './uploads/file/';
+						$config['allowed_types'] = 'gif|jpg|png';
+				      	
+				      	$this->upload->initialize($config);
+				      	if(! $this->upload->do_upload()){
+				      		$pesanfile=$this->upload->display_errors();
+				      	}else{
+				      		$data = $this->upload->data();
+				      		$this->db->query("insert into file_report_kcp
+									(id_laporan_staff_fisik,type_file,nama_file,tipe,user_id)
+									values('".$insert_id."','".$this->upload->file_type."','".$this->upload->file_name."',
+									'File','".$user->id."')");
+				      		$pesanfile="Berhasil diupload file";
+				      	}
+				    }
+				}else{
+					$pesanfile="Tidak ada file yang dipilih";
+				}
+				
+
+				//jika ada video
+			    $video['upload_path']          = './uploads/video/';
+				$video['allowed_types']        = 'gif|jpg|png';
+				$video['max_size']             = 100;
+				$video['max_width']            = 1024;
+				$video['max_height']           = 768;
+
+				$this->upload->initialize($video);
+
+				if ( $this->upload->do_upload('video')){
+					$data=$this->upload->data();
+
+					$savevideo=$this->db->query("insert into file_report_kcp 
+						(id_laporan_staff_fisik,type_file,nama_file,tipe,user_id)
+						values('".$insert_id."','".$data['file_type']."','".$data['file_name']."',
+						'Video','".$user->id."')");
+					$pesanvideo="Video Berhasil diupload";
+				}else{
+					$pesanvideo=$this->upload->display_errors();
+				}
+
+
+				//jika ada misterycaller
+				if(!empty($_FILES['fileMistery']['name'])){
+					$number_of_files_uploaded = count($_FILES['fileMistery']['name']);
+				    
+				    for ($i = 0; $i < $number_of_files_uploaded; $i++){
+				    	$_FILES['userfile']['name']     = $_FILES['fileMistery']['name'][$i];
+				      	$_FILES['userfile']['type']     = $_FILES['fileMistery']['type'][$i];
+				      	$_FILES['userfile']['tmp_name'] = $_FILES['fileMistery']['tmp_name'][$i];
+				      	$_FILES['userfile']['error']    = $_FILES['fileMistery']['error'][$i];
+				      	$_FILES['userfile']['size']     = $_FILES['fileMistery']['size'][$i];
+
+				      	$config['upload_path']          = './uploads/mistery/';
+						$config['allowed_types'] = 'gif|jpg|png';
+				      	
+				      	$this->upload->initialize($config);
+				      	if(! $this->upload->do_upload()){
+				      		$pesanmistery=$this->upload->display_errors();
+				      	}else{
+				      		$data = $this->upload->data();
+				      		$this->db->query("insert into file_report_kcp
+									(id_laporan_staff_fisik,type_file,nama_file,tipe,user_id)
+									values('".$insert_id."','".$this->upload->file_type."','".$this->upload->file_name."',
+									'File Mistery','".$user->id."')");
+				      		$pesanmistery="Berhasil diupload Mistery File";
+				      	}
+				    }
+				}else{
+					$pesanmistery="Tidak ada mistery file";
+				}
+
+				$json=array('success'=>true,
+				'header'=>'Success',
+				'pesan'=>'Data Berhasil disimpan');
 			}
-		}else{
+		}else
+		{
 			$json=array('success'=>false,'pesan'=>'Data Gagal disimpan, Data tidak lengkap');
 		}
 
 		$this->response($json);
+	}
+
+	function delete_report_staff_by_person_delete($id){
+		$this->db->where('id',$id);
+		$this->db->delete('file_report_kcp');
+
+		$data=array(
+			'success'=>true,
+			'pesan'=>'Data Berhasil dihapus'
+		);
+
+		$this->response($data);
 	}
 
 	function kcp_post(){
@@ -1177,6 +1374,175 @@ class Api extends REST_Controller{
 		$report=$this->report->report_fisik_by_kcp($fisik,$kcp);
 
 		$this->response($report);		
+	}
+
+	function save_report_fisik_by_kcp_post()
+	{
+		$this->form_validation->set_data($this->post());
+
+		$this->form_validation->set_rules('kcp','Kcp','required');
+		$this->form_validation->set_rules('fisik','Fisik','required');
+		$this->form_validation->set_rules('nilai','Nilai','required');
+
+		if($this->form_validation->run()==true)
+		{
+			$user = $this->ion_auth->user()->row();
+			$kcp=$this->post('kcp');
+			$fisik=$this->post('fisik');
+			$nilai=$this->post('nilai');
+			$parameter=$this->post('parameter');
+			$komentar=$this->post('komentar');
+			$mcoa=$this->post('mcoa');
+			$mcoa_komentar=$this->post('mcoa_komentar');
+			$konten=$this->post('konten');
+
+			//cek dulu sudah ada atau belum
+			$cek=$this->db->query("select * from laporan_staff_or_fisik
+				where id_kcp='".$this->post('kcp')."'
+				and id_fisik='".$this->post('fisik')."'
+				and id_daftar_laporan='".$this->session->kunjungan['id']."'")->row();
+
+			if(count($cek)>0)
+			{
+				//update laporan staff or fisik
+				$updatereport=$this->db->query("update laporan_staff_or_fisik 
+				set index_nilai='".$this->post('nilai')."'
+						where id='".$cek->id."'");
+				
+				//update data parameter
+				if(count($parameter)>0)
+				{
+					foreach($parameter as $key=>$val)
+					{
+
+						$this->db->query("update report_mcoa_kategori 
+							set jawaban='".$val['id']."',
+							komentar='".$komentar[$key]."'
+							where kategori_id='".$key."'
+							and id_kunjungan='".$this->session->kunjungan['id']."'
+							and id_laporan_staff_or_fisik='".$cek->id."'"
+						);
+					}
+				}
+
+				//update data mcoa
+				if(count($mcoa)>0)
+				{
+					foreach($mcoa as $key=>$val)
+					{
+						$this->db->query("update report_mcoa_kategori 
+							set jawaban='".$val['id']."',
+							komentar='".$komentar[$key]."'
+							where mcoa_id='".$key."'
+							and id_kunjungan='".$this->session->kunjungan['id']."'
+							and id_laporan_staff_fisik='".$cek->id."'"
+						);
+					}
+				}
+
+				
+				$json=array('success'=>true,
+					'header'=>'Sukses',
+					'pesan'=>'Data Berhasil disimpan');
+			}else
+			{
+				//insert new
+				$lap=$this->db->query("insert into laporan_staff_or_fisik
+					(id_kcp,id_fisik,id_daftar_laporan,index_nilai,user_id)
+					values('".$kcp."','".$fisik."','".$this->session->kunjungan['id']."',
+					'".$nilai."','".$user->id."')");
+
+				$insert_id = $this->db->insert_id();
+
+				//insert data parameter
+				if(count($parameter)>0)
+				{
+					foreach($parameter as $key=>$val)
+					{
+						if(isset($komentar[$key])) { 
+							$b=$komentar[$key]; 
+						}else{
+							$b="";
+						}
+
+						$this->db->query("insert into 
+						report_mcoa_kategori (id_laporan_staff_or_fisik,kategori_id,jawaban,komentar,id_kunjungan,user_id,created_at)
+						values('".$insert_id."','".$key."','".$val['id']."',
+						'".$b."',
+						'".$this->session->kunjungan['id']."',
+						'".$user->id."','".date('Y-m-d')."')
+						");
+					}
+				}
+
+				//insert data mcoa
+				if(count($mcoa)>0)
+				{
+					foreach($mcoa as $key=>$val)
+					{
+						if(isset($komentar[$key])){ 
+							$b=$komentar[$key]; 
+						}else{
+							$b="";
+						}
+
+						$this->db->query("insert into 
+						report_mcoa_kategori (id_laporan_staff_or_fisik,mcoa_id,jawaban,komentar,id_kunjungan,user_id,created_at)
+						values('".$insert_id."','".$key."','".$val."',
+						'".$b."',
+						'".$this->session->kunjungan['id']."',
+						'".$user->id."','".date('Y-m-d')."')
+						");
+					}
+				}
+
+				
+
+				$json=array('success'=>true,
+				'header'=>'Success',
+				'pesan'=>'Data Berhasil disimpan');
+			}
+		}else
+		{
+			$json=array('success'=>false,'pesan'=>'Data Gagal disimpan, Data tidak lengkap');
+		}
+
+		$this->response($json);
+	}
+
+	function cari_fisik_by_id_get($id){
+		$query=$this->parameter->parameter_by_id($id);
+
+		$this->response($query);
+	}
+
+	function update_parameter_by_id_put($id){
+		$this->form_validation->set_data($this->put());
+
+		$this->form_validation->set_rules('nama','Nama','required');
+
+		if($this->form_validation->run()==true)
+		{
+			$data=array(
+				'nama_parameter'=>$this->put('nama')
+			);
+
+			$update=$this->parameter->update_parameter_by_id($id,$data);
+
+			$json=array(
+				'success'=>true,
+				'nama_parameter'=>$this->put('nama'),
+				'pesan'=>'Data berhasil diupdate'
+			);
+		}else{
+			$json=array(
+				'success'=>false,
+				'error'=>validation_errors(),
+				'pesan'=>'Validasi Gagal'
+			);
+		}
+
+		$this->response($json);
 	}
 
 	function keterangan_get(){

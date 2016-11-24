@@ -212,8 +212,6 @@ angular.module('bjbController',[])
     };
 
     $scope.detail=function(id){
-        $scope.detail={};
-
         Cabang.getById(id)
             .success(function(data){
                 $scope.details=data;
@@ -1112,6 +1110,8 @@ angular.module('bjbController',[])
             case "tambah":
                 var data={nama:$scope.nama,start:$scope.datePicker.date.startDate,end:$scope.datePicker.date.endDate};
                 $scope.loading=true;
+                console.log(data);
+                
                 Laporan.daftarSave(data)
                     .success(function(result){
                         $("#myModal").modal("hide");
@@ -1120,12 +1120,14 @@ angular.module('bjbController',[])
                         $scope.pesan=data;
                         tampilPesan();
                     });
+                
                 break;
             case 'edit':
                 $scope.loading=true;
 
                 var data={nama:$scope.nama,start:$scope.datePicker.date.startDate,end:$scope.datePicker.date.endDate};
-
+                console.log(data);
+                /*
                 Laporan.daftarUpdate(id,data)
                     .success(function(data){
                         console.log(data);
@@ -1135,6 +1137,7 @@ angular.module('bjbController',[])
                         $scope.pesan=data;
                         tampilPesan();
                     })
+                    */
                 break;
 
             default:
@@ -1608,6 +1611,11 @@ angular.module('bjbController',[])
         getPosisi();
     }
 
+    function tampilPesan(){
+        $scope.showMessage=true; 
+        $timeout(function () { $scope.showMessage = false; }, 5000); 
+    }
+
     function getPosisi(){
         Mcoa.getFisikId($scope.idkategori)
             .success(function(data){
@@ -1686,6 +1694,54 @@ angular.module('bjbController',[])
                 swal("Cancelled", "Your data is safe :)", "error");   
             } 
         });
+    }
+
+    $scope.form=function(modalstate,id){
+        $scope.modalstate=modalstate;
+        $scope.id=id;
+
+        switch(modalstate){
+            case "tambah":
+                $scope.form_title="Tambah Kategori MCOA";
+                $scope.newForm={nama:''}
+
+                break;
+            case "edit":
+                $scope.form_title="Ubah Data";
+                Mcoa.cari_fisik_by_id(id)
+                    .success(function(data){
+                        console.log(data);
+                        $scope.id_parameter=data.id_parameter;
+                        $scope.nama=data.nama_parameter;
+                    })
+                    .error(function(data){
+                        alert('Link Belum ada')
+                    })
+                    
+                break;
+            default:
+                $scope.newForm={};
+                break;
+        }
+        $("#myModal").modal('show');
+    };
+
+    $scope.update=function(id){
+        var data={kode:id,nama:$scope.nama};
+
+        $scope.loading=true;
+
+        Mcoa.update_parameter_by_id(id,data)
+            .success(function(result){
+                console.log(result);
+                $scope.loading=false;
+                $("#myModal").modal("hide");
+                awal();
+                $("#myModal").modal("hide");
+            })
+            .error(function(result){
+                alert('Data tidak ada');
+            })
     }
 })
 
@@ -1930,20 +1986,24 @@ angular.module('bjbController',[])
 
 })
 
-.controller('reportStaffByPerson',function($scope,$filter,$timeout,Report,Upload){
+.controller('reportStaffByPerson',function($scope,$filter,$timeout,Report,Upload,$http){
     $scope.idstaff = $filter('_uriseg')(3);
     console.log($scope.idstaff);
     $scope.hasil={};
-    $scope.kategori_parameter={};
-    $scope.kategori_komentar={};
-    $scope.detail_mcoa_parameter={};
+    $scope.parameter={};
+    $scope.komentar={};
+    $scope.mcoa={};
     $scope.mcoa_komentar={};
+
+    $scope.pilihans=[{id:'N/A'},{id:'Ya'},{id:'Tidak'}];
+    
 
     function get(){
         Report.report_staff_by_person($scope.idstaff)
             .success(function(data){
                 $scope.hasil=data;
                 $scope.nilai=parseInt(data.nilai);
+                $scope.konten=data.summary;
             })
     }
 
@@ -1956,19 +2016,6 @@ angular.module('bjbController',[])
     $scope.$on("ckeditor.ready", function( event ) {
         $scope.isReady = true;
     });
-
-    $scope.konten="<p style='text-align:center;'><strong>Summary</strong></p>"+
-        "<p style='text-align:center;'>Skenario shopper adalah menepon bank yang dituju dan memposisikan sebagai nasabah pada umumnya, shopper menanyakan produk bank bjb. Shopper melakukan evaluasi layanan telepon bank yang dituju</p>"+
-        "<p><strong>Sikap Transaksi</strong></p>"+
-        "<p>Secara keseluruhan sikap dan proses pelayanan petugas operator telepon ketika proses transaksi dengan konsumen dapat dikatakan kurang baik.</p>"+
-        "<ul>"+
-            "<li>Pada saat petama kali telepon ke cabang/cabang pembantu/ gerai bank bjb syariah 2 kali langsung tersambung dan 3 kali nada tunggu telepon langsung tersambung dengan memasukan no ext ke CS.</li>"+
-            "<li>Petugas mengucapkan bagian unit kerja, memperkenalkan diri, menawarkan bantuan, menanyakan nama nasabah, intonasi suara ramah dan menyebutkan nama nasabah selama transaksi. </li>"+
-            "<li>Petugas menanyakan kepada nasabah produk investasi yang diinginkan, menanyakan tujuan investasi dan jangka waktu investasi dan menjelaskan mengenai cara investasi. <span style='color:red'>akan tetapi petugas tidak menanyakan tentang produk yang nasabah miliki di bjb syariah.</span></li>"+
-            "<li>Petugas menjelaskan definisi produk investasi, persyaratan investasi, keuntungan investasi dan menjelaskan pilihan jenis/jangka waktu produk investasi. </li>"+
-            "<li>Petugas berbicara dengan jelas, menjelaskan dengan spontan dan menggunakan nama nasabah selama percakapan.</li>"+
-            "<li>Pada akhir percakapan petugas tidak menanyakan kejelasan materi, menegaskan produk apakan sudah sesuai dengan kebutuhan nasabah, menawarkan bantuan lain, pertugas mengucapkan terima kasih telah menghubungi bank bjb syariah, mengucapkan selamat beraktifitas kembali dan mengucapkan salam. <span style='color:red'>akan tetapi petugas tidak</span> mengedukasi nasabah mengenai call center (salam maslahah 1500727) dan menutup gagang telepon terlebih dahulu.</li>";
-
 
     $scope.items=[];
     $scope.itemsMistery=[];
@@ -2001,72 +2048,128 @@ angular.module('bjbController',[])
             'staff':this.hasil.id_staff,
             'posisi':this.hasil.id_posisi,
             'nilai':$scope.nilai,
-            'kategori_parameter':$scope.kategori_parameter,
-            'ktegori_komentar':$scope.kategori_komentar,
+            'parameter':$scope.parameter,
+            'komentar':$scope.komentar,
+            'mcoa':$scope.mcoa,
             'mcoa_komentar':$scope.mcoa_komentar,
-            'detail_mcoa_parameter':$scope.detail_mcoa_parameter,
             'konten':$scope.konten,
             'file':file,
             'fileMistery':fileMistery,
             'video':Video
         }
-        console.log(data);  
+        console.log(data);
 
+        /*tampilkan modal */
+        $("#modal-notif").modal("show");
+        $(".modal-title").html("&nbsp; Please wait. . .");
+        $(".modal-body").html('<i class="fa fa-spinner fa-2x fa-spin"></i>&nbsp; Pelase Wait for a few minutes');  
+        
         File.upload = Upload.upload({
             url: '../../api/save_report_staff_by_person',
             data: data,
         });
 
         File.upload.then(function (response) {
+            $(".modal-title").html('&nbsp; '+response.data.header);
+            $(".modal-body").html('&nbsp; '+response.data.pesan);
+
+            get();
+            /*
             $timeout(function () {
                 console.log(response);
                 swal("Good job!", "Sukses Mengupdate Data!", "success");
                 File.result = response.pesan;
             });
+            */
         }, function (response) {
-            if (response.success > 0)
-                $scope.errorMsg = response.success + ': ' + response.pesan;
+            $('.modal-title').html('&nbsp; Oppss...');
+            $('.modal-body').html('Something Wrong. . .');
         }, function (evt) {
             // Math.min is to fix IE which reports 200% sometimes
             File.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
         });
-        
-        /*
-        file.upload = Upload.upload({
-            url: '../api/save_report_staff_by_person/',
-            method:'post',
-            data: {
-                kcp:this.hasil.id_kcp,
-                staff:this.hasil.id_staff,
-                posisi:this.hasil.id_posisi,
-                nilai:$scope.nilai,
-                kategori_parameter:$scope.kategori_parameter,
-                ktegori_komentar:$scope.kategori_komentar,
-                mcoa_komentar:$scope.mcoa_komentar,
-                detail_mcoa_parameter:$scope.detail_mcoa_parameter,
-                konten:$scope.konten,
-                file:File,
-                fileMistery:fileMistery,
-                video:Video
-            },
+    }
+
+    $scope.hapusfile=function(id){
+        swal({
+            title: "Are you sure?",
+            text: "You will not be able to recover this imaginary file!",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Yes, delete it!",
+            closeOnConfirm: false
+        },
+        function(){
+            $http.delete('../../api/delete_report_staff_by_person/'+id)
+                .success(function(result){
+                    swal("Deleted!", "Your imaginary file has been deleted.", "success");
+                    get();
+                })
+                .error(function(result){
+                    swal("Error!", "Data Gagal dihapus!", "error");
+                })
+            
         });
-        */
     }
 })
 
-.controller('reportFisikByKcp',function($scope,$filter,Report){
+.controller('reportFisikByKcp',function($scope,$filter,Report,Upload){
     $scope.idfisik = $filter('_uriseg')(3);
     $scope.idkcp = $filter('_uriseg')(4);
-    console.log($scope.idstaff);
     $scope.hasil={};
+    $scope.parameter={};
+    $scope.komentar={};
+    $scope.mcoa={};
+    $scope.mcoa_komentar={};
+
+    $scope.pilihans=[{id:'N/A'},{id:'Ya'},{id:'Tidak'}];
 
     function get(){
         Report.report_fisik_by_kcp($scope.idfisik,$scope.idkcp)
             .success(function(data){
                 $scope.hasil=data;
+                $scope.nilai=parseInt(data.nilai);
                 console.log(data);
             })
     }
 
     get();
+
+    $scope.simpan=function(file,fileMistery,Video){
+        var data={
+            'kcp':this.hasil.id_kcp,
+            'fisik':this.hasil.id_fisik,
+            'posisi':this.hasil.id_posisi,
+            'nilai':$scope.nilai,
+            'parameter':$scope.parameter,
+            'komentar':$scope.komentar,
+            'mcoa':$scope.mcoa,
+            'mcoa_komentar':$scope.mcoa_komentar
+        }
+        console.log(data);
+
+        /*tampilkan modal */
+        $("#modal-notif").modal("show");
+        $(".modal-title").html("&nbsp; Please wait. . .");
+        $(".modal-body").html('<i class="fa fa-spinner fa-2x fa-spin"></i>&nbsp; Pelase Wait for a few minutes');  
+        
+        File.upload = Upload.upload({
+            url: '../../../api/save_report_fisik_by_kcp',
+            data: data,
+        });
+
+        File.upload.then(function (response) {
+            $(".modal-title").html('&nbsp; '+response.data.header);
+            $(".modal-body").html('&nbsp; '+response.data.pesan);
+
+            get();
+        }, function (response) {
+            $('.modal-title').html('&nbsp; Oppss...');
+            $('.modal-body').html('Something Wrong. . .');
+        }, function (evt) {
+            // Math.min is to fix IE which reports 200% sometimes
+            File.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
+        });
+    }
 })

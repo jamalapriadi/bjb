@@ -110,4 +110,15 @@ class M_parameter extends CI_Model{
 			}
 		}
 	}
+
+	function parameter_by_id($id){
+		$query=$this->db->query("select id_parameter,nama_parameter from parameter where id_parameter='".$id."'")->row();
+
+		return $query;
+	}
+
+	function update_parameter_by_id($id,$data){
+		$this->db->where('id_parameter',$id);
+		$this->db->update('parameter',$data);
+	}
 }

@@ -120,7 +120,7 @@
                                 <td>{{$index+1}}</td>
                                 <td>{{p.nama_parameter}}</td>
                                 <td>
-                                    <a href="#" class="btn btn-warning btn-xs btn-sm" title="Rubah" ng-click="form('edit',p.id_kategori)">
+                                    <a href="#" class="btn btn-warning btn-xs btn-sm" title="Rubah" ng-click="form('edit',p.id_parameter)">
                                         <i class="fa fa-edit"></i>
                                     </a>
 
@@ -154,13 +154,13 @@
 
                             <div class="form-group">
                                 <label for="">Nama</label>
-                                <input type="text" name="nama" ng-model="newForm.nama" class="form-control">
+                                <input type="text" name="nama" ng-model="nama" ng-value="nama" class="form-control">
                             </div>
 
                             <hr>
 
 
-                            <button type="submit" class="btn btn-primary" ng-click="save(modalstate,id)">Simpan</button>
+                            <button type="submit" class="btn btn-primary" ng-click="update(id_parameter)">Simpan</button>
                             <button type="button" data-dismiss="modal" class="btn btn-default">Cancel</button>
                         </form>
                     </div>

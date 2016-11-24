@@ -1,42 +1,19 @@
-    <!-- jquery -->
-    <script src="<?php echo base_url('assets/js/jquery.js');?>"></script>
-	<!-- bootstrap -->
-    <script src="<?php echo base_url('assets/js/bootstrap.min.js');?>"></script>
-    <!-- AdminLTE App -->
-    <script src="<?php echo base_url('assets/js/AdminLTE/app.js');?>"></script>
-    <script src="<?php echo base_url('assets/js/jquery.dataTables.min.js');?>"></script>
-
-    <!-- sweet alert-->
-    <script src="<?php echo base_url('assets/sweetalert/dist/sweetalert.min.js');?>"></script>
-
-    <!-- select2 -->
-    <script type="text/javascript" src="<?php echo base_url('assets/select2/select2.js');?>"></script>
-
-    <!-- angular -->
-    <script src="<?php echo base_url('assets/angular/angular.js');?>"></script>
-    <script src="<?php echo base_url('assets/angular/angular-resource.js');?>"></script>
-    <script src="<?php echo base_url('assets/loading/angular-spinner.min.js');?>"></script>
-    <script src="<?php echo base_url('assets/loading/angular-loading-spinner.js');?>"></script>
-    <script src="<?php echo base_url('assets/angular-datatables/dist/angular-datatables.min.js');?>"></script>
-    <script src="<?php echo base_url('assets/angular/angular-animate.js');?>"></script>
-    <script src="<?php echo base_url('assets/angular/angular-sanitize.min.js');?>"></script>
-    <script type="text/javascript" src="<?php echo base_url('assets/angular-ui-select2/src/select2.js');?>"></script>
-    <script src="<?php echo base_url('assets/moment/moment.js');?>"></script>
-    <script src="<?php echo base_url('assets/bootstrap-daterangepicker/daterangepicker.js');?>"></script>
-    <script src="<?php echo base_url('assets/angular-daterangepicker/js/angular-daterangepicker.js');?>"></script>
-    <!-- file upload-->
-    <script src="<?php echo base_url('assets/ng-file-upload/ng-file-upload-shim.min.js');?>"></script> <!-- for no html5 browsers support -->
-    <script src="<?php echo base_url('assets/ng-file-upload/ng-file-upload.min.js');?>"></script>
-    <!-- end angular -->
-
-    <!-- ckeditor-->
-    <script src="<?php echo base_url('assets/ckeditor/ckeditor.js');?>"></script>
-    <script src="<?php echo base_url('assets/ng-ckeditor/ng-ckeditor.js');?>"></script>
-
-    <!-- app -->
-	<script src="<?php echo base_url('assets/app/controllers/bjbCtrl.js');?>"></script>
-    <script src="<?php echo base_url('assets/app/services/bjbService.js');?>"></script>
-    <script src="<?php echo base_url('assets/app/bjb.js');?>"></script>
-    <!-- end app-->
+        <!-- Modal -->
+        <div class="modal fade" id="modal-notif" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Modal title</h4>
+                </div>
+                <div class="modal-body">
+                ...
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
     </body>
 </html>
