@@ -63,7 +63,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="">Start Periode</label>
+                                <label for="">Periode</label>
                                 <input date-range-picker class="form-control date-picker" type="text" ng-model="datePicker.date" ng-value="datePicker.date" />
                             </div>
 

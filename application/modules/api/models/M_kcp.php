@@ -35,4 +35,14 @@ class M_kcp extends CI_Model{
 		$this->db->where($this->primary,$id);
 		$this->db->delete($this->table);
 	}
+
+	function top_kcp(){
+		$data=$this->db->query("select a.*, b.nama_kcp, b.alamat_kcp from report_kcp a
+			left join kcp b on b.id_kcp=a.id_kcp
+			where a.id_daftar_laporan='".$this->session->kunjungan['id']."'
+			order by a.index_nilai desc
+			limit 10")->result();
+
+		return $data;
+	}
 }

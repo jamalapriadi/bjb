@@ -1127,7 +1127,7 @@ angular.module('bjbController',[])
 
                 var data={nama:$scope.nama,start:$scope.datePicker.date.startDate,end:$scope.datePicker.date.endDate};
                 console.log(data);
-                /*
+                
                 Laporan.daftarUpdate(id,data)
                     .success(function(data){
                         console.log(data);
@@ -1137,7 +1137,6 @@ angular.module('bjbController',[])
                         $scope.pesan=data;
                         tampilPesan();
                     })
-                    */
                 break;
 
             default:

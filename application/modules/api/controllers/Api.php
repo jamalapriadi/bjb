@@ -1203,6 +1203,8 @@ class Api extends REST_Controller{
 						'user_id'=>$iduser
 					);
 				$simpan=$this->report->save_report_by_kcp($data);
+
+				$id=$this->db->insert_id();
 		 		
 		 		$this->load->library('upload');
 
@@ -1224,7 +1226,8 @@ class Api extends REST_Controller{
 			      		$data = $this->upload->data();
 			      		$this->db->query("insert into file_report_kcp
 								(id_report_kcp,type_file,nama_file,user_id)
-								values('".$id."','".$this->upload->file_type."','".$this->upload->file_name."','".$iduser."')");
+								values('".$id."','".$this->upload->file_type."',
+								'".$this->upload->file_name."','".$iduser."')");
 			      	}
 			    }
 
@@ -1551,5 +1554,31 @@ class Api extends REST_Controller{
 		echo "Nama : ".$this->session->kunjungan['nama']."<br>";
 		echo "Nama : ".$this->session->kunjungan['id']."<br>";
 		echo "ID User :".$user->id."<br>";
+	}
+
+	/* ======= START FOR FRONT LINE ================= */
+	function front_top_all_post()
+	{
+		$topKcp=$this->kcp->top_kcp();
+
+		$data=array(
+			'top_kcp'=>$topKcp
+		);
+
+		$this->response($data);
+	}
+
+	function front_top_posisi_post(){
+		$topPosisi=$this->posisi->top_posisi();
+
+		$this->response($topPosisi);
+	}
+
+	function front_top_kcp_posisi_post(){
+		$id=$this->post('id');
+
+		$data=$this->posisi->top_kcp_by_posisi($id);
+		
+		$this->response($data);
 	}
 }

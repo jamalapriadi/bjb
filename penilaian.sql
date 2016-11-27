@@ -3,9 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Oct 19, 2016 at 07:15 PM
--- Server version: 5.7.15-0ubuntu0.16.04.1
--- PHP Version: 7.0.12-1+deb.sury.org~xenial+1
+-- Generation Time: Nov 28, 2016 at 12:12 AM
+-- Server version: 5.7.16-0ubuntu0.16.04.1
+-- PHP Version: 7.0.13-1+deb.sury.org~xenial+1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -80,7 +80,8 @@ CREATE TABLE `detail_laporan` (
   `id` int(11) UNSIGNED NOT NULL,
   `id_laporan_staff` int(11) UNSIGNED NOT NULL,
   `id_paramater` int(11) UNSIGNED NOT NULL,
-  `optional` enum('N/A','Ya','Tidak') NOT NULL,
+  `pilihan_kategori` enum('N/A','Ya','Tidak') NOT NULL,
+  `pilihan_mcoa` int(10) UNSIGNED DEFAULT NULL,
   `komentar` varchar(255) NOT NULL,
   `user_id` int(11) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -103,10 +104,6 @@ CREATE TABLE `detail_parameter` (
 --
 
 INSERT INTO `detail_parameter` (`id`, `id_parameter`, `pilihan`) VALUES
-(4, 20, 'A'),
-(5, 21, 'A'),
-(6, 21, 'B'),
-(7, 21, 'C'),
 (19, 402, 'Lebih dari 3 kali'),
 (20, 402, '3 Kali'),
 (21, 402, '2 kali'),
@@ -126,7 +123,10 @@ INSERT INTO `detail_parameter` (`id`, `id_parameter`, `pilihan`) VALUES
 (35, 406, '0 - 30 detik'),
 (36, 406, '31 detik – 60 detik'),
 (37, 406, '61 detik – 1 menit 30 detik'),
-(38, 406, 'Lebih dari 1 menit 30 detik');
+(38, 406, 'Lebih dari 1 menit 30 detik'),
+(39, 463, 'Pilihan 1'),
+(40, 463, 'Pilihan 2'),
+(41, 463, 'Pilihan 3');
 
 -- --------------------------------------------------------
 
@@ -137,9 +137,11 @@ INSERT INTO `detail_parameter` (`id`, `id_parameter`, `pilihan`) VALUES
 DROP TABLE IF EXISTS `file_report_kcp`;
 CREATE TABLE `file_report_kcp` (
   `id` int(11) UNSIGNED NOT NULL,
-  `id_report_kcp` int(11) UNSIGNED NOT NULL,
+  `id_report_kcp` int(11) UNSIGNED DEFAULT NULL,
+  `id_laporan_staff_fisik` int(11) UNSIGNED DEFAULT NULL,
   `type_file` varchar(255) NOT NULL,
   `nama_file` varchar(255) NOT NULL,
+  `tipe` varchar(15) NOT NULL,
   `user_id` int(11) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -147,9 +149,11 @@ CREATE TABLE `file_report_kcp` (
 -- Dumping data for table `file_report_kcp`
 --
 
-INSERT INTO `file_report_kcp` (`id`, `id_report_kcp`, `type_file`, `nama_file`, `user_id`) VALUES
-(6, 1, 'image/jpeg', '091.jpg', 1),
-(7, 1, 'image/jpeg', '092.jpg', 1);
+INSERT INTO `file_report_kcp` (`id`, `id_report_kcp`, `id_laporan_staff_fisik`, `type_file`, `nama_file`, `tipe`, `user_id`) VALUES
+(1, 2, NULL, 'image/jpeg', '096.jpg', '', 1),
+(3, 3, NULL, 'image/jpeg', '098.jpg', '', 1),
+(5, 5, NULL, 'image/jpeg', '0910.jpg', '', 1),
+(6, 6, NULL, 'image/jpeg', '0911.jpg', '', 1);
 
 -- --------------------------------------------------------
 
@@ -198,7 +202,12 @@ CREATE TABLE `fisik_kcp` (
 
 INSERT INTO `fisik_kcp` (`id`, `id_fisik`, `id_kcp`) VALUES
 (1, 1, 1),
-(4, 1, 2);
+(4, 1, 2),
+(5, 2, 1),
+(6, 3, 1),
+(7, 8, 1),
+(8, 9, 1),
+(9, 10, 1);
 
 -- --------------------------------------------------------
 
@@ -334,6 +343,7 @@ CREATE TABLE `laporan_staff_or_fisik` (
   `id_fisik` int(11) UNSIGNED DEFAULT NULL,
   `id_daftar_laporan` int(11) UNSIGNED NOT NULL,
   `index_nilai` decimal(10,0) NOT NULL,
+  `summary` text NOT NULL,
   `user_id` int(11) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -341,9 +351,10 @@ CREATE TABLE `laporan_staff_or_fisik` (
 -- Dumping data for table `laporan_staff_or_fisik`
 --
 
-INSERT INTO `laporan_staff_or_fisik` (`id`, `id_kcp`, `id_staff`, `id_fisik`, `id_daftar_laporan`, `index_nilai`, `user_id`) VALUES
-(1, 1, 1, NULL, 4, '5', 1),
-(2, 1, NULL, 1, 4, '90', 1);
+INSERT INTO `laporan_staff_or_fisik` (`id`, `id_kcp`, `id_staff`, `id_fisik`, `id_daftar_laporan`, `index_nilai`, `summary`, `user_id`) VALUES
+(24, 1, NULL, 1, 4, '75', '', 1),
+(25, 1, NULL, 2, 4, '94', '', 1),
+(26, 1, 1, NULL, 4, '80', 'null', 1);
 
 -- --------------------------------------------------------
 
@@ -390,10 +401,7 @@ INSERT INTO `mcoa_kategori` (`id_kategori`, `nama_kategori`, `id_posisi`, `id_fi
 (20, 'Berbicara & penjelasan', 3, NULL, 'Kategori'),
 (21, 'Pada saat pertama kali telepon ke cabang/cabang pembantu/gerai bank bjb syariah berapa kalikah telepon dapat tersambung', 3, NULL, 'Kategori'),
 (22, 'Setelah tersambung berapa kali nada tunggu baru telepon diangkat', 3, NULL, 'Kategori'),
-(23, 'Tes Ah', NULL, 1, 'Mcoa'),
-(24, 'Tes Atm', NULL, 1, 'Mcoa'),
 (26, 'Bagaimana kondisi dinding didalam ATM?', NULL, 1, 'Kategori'),
-(27, 'Tes Fisik Kategori Kedua', NULL, 1, 'Mcoa'),
 (29, 'Tes Analis Emas', 1, NULL, 'Mcoa'),
 (33, 'Apakah pada saat Anda/nasabah datang terdapat analisemas yang melayani', 1, NULL, 'Kategori'),
 (34, 'Bagaimana keberadaan perlengkapan meja/tempat bekerja AE', 1, NULL, 'Kategori'),
@@ -439,7 +447,25 @@ INSERT INTO `mcoa_kategori` (`id_kategori`, `nama_kategori`, `id_posisi`, `id_fi
 (74, 'Keberadaan Tempat Sampah', NULL, 1, 'Kategori'),
 (75, 'Lampu ATM', NULL, 1, 'Kategori'),
 (76, 'Durasi waktu pembukaan rekening', 2, NULL, 'Mcoa'),
-(77, 'Skill Teller', 4, NULL, 'Mcoa');
+(77, 'Skill Teller', 4, NULL, 'Mcoa'),
+(78, 'Bagaimana kondisi dinding didalam banking hall?', NULL, 2, 'Kategori'),
+(79, 'Bagaimana kondisi kaca pada banking hall?', NULL, 2, 'Kategori'),
+(80, 'Bagaimana kondisi lantai didalam banking hall?', NULL, 2, 'Kategori'),
+(81, 'Bagaimana kondisi pencahayaan didalam banking hall?', NULL, 2, 'Kategori'),
+(82, 'Bagaimana kondisi plafon didalam banking hall?', NULL, 2, 'Kategori'),
+(83, 'Bagaimana suhu ruangan di dalam banking hall?', NULL, 2, 'Kategori'),
+(84, 'Bagaimanakah kondisi tanaman hidup didalam banking hall?', NULL, 2, 'Kategori'),
+(85, 'Kenyamanan Banking Hall', NULL, 2, 'Kategori'),
+(86, 'Bagaimana kondisi dinding luar banking hall di kantor pelayanan bank bjb syariah', NULL, 3, 'Kategori'),
+(87, 'Bagaimana kondisi neon sign bank bjb syariah', NULL, 3, 'Kategori'),
+(88, 'Bagaimana kondisi tempat parkir di kantor pelayanan bank bjb syariah', NULL, 3, 'Kategori'),
+(89, 'Terdapat keset berwarna merah dengan lebar minimal sama dengan depan pintu masuk banking hall di kantor pelayanan bank bjb syariah', NULL, 3, 'Kategori'),
+(90, 'Terdapat neon sign bank bjb syariah di depan kantor pelayanan bank bjb syariah', NULL, 3, 'Kategori'),
+(91, 'Terdapat tempat parkir di kantor pelayanan bank bjb syariah', NULL, 3, 'Kategori'),
+(92, 'Bagaimana kondisi dinding luar banking hall di kantor pelayanan bank bjb syariah', NULL, 5, 'Kategori'),
+(93, 'Bagaimana kondisi tempat parkir di kantor pelayanan bank bjb syariah', NULL, 5, 'Kategori'),
+(94, 'Kondisi luar Banking Hall', NULL, 5, 'Kategori'),
+(95, 'Tes MCOA', NULL, 1, 'Mcoa');
 
 -- --------------------------------------------------------
 
@@ -501,8 +527,6 @@ CREATE TABLE `parameter` (
 --
 
 INSERT INTO `parameter` (`id_parameter`, `id_kategori`, `id_posisi`, `id_fisik`, `gender`, `nama_parameter`) VALUES
-(20, 23, NULL, 1, '', 'Tes ATM dengan ng-parent'),
-(21, 23, NULL, 1, '', 'Tes dengan ng parent 2'),
 (26, 13, 3, NULL, 'Pria,Wanita', 'Lebih dari 3 kali'),
 (27, 13, 3, NULL, 'Pria,Wanita', '3 Kali'),
 (28, 13, 3, NULL, 'Pria,Wanita', '2 kali'),
@@ -834,7 +858,7 @@ INSERT INTO `parameter` (`id_parameter`, `id_kategori`, `id_posisi`, `id_fisik`,
 (366, 64, 5, NULL, 'Pria,Wanita', 'Tidak ada barang yang tidak semestinya (Tidak terlihat barang pribadi, alat makan/minum, foto pribadi boneka & hiasan)'),
 (367, 26, NULL, 1, NULL, 'Dinding terlihat bersih secara keseluruhan'),
 (368, 26, NULL, 1, NULL, 'Tidak ada kotoran /coretan/cat terkelupas'),
-(369, 26, NULL, 1, NULL, 'Warna dinding terlihat cerah'),
+(369, 26, NULL, 1, NULL, 'Semuanya beres'),
 (370, 65, NULL, 1, NULL, 'Terlihat bersih dan mengkilap'),
 (371, 65, NULL, 1, NULL, 'Tidak ada bekas kotoran yang menempel'),
 (372, 65, NULL, 1, NULL, 'Tidak ada goresan pada kaca akibat benda tumpul/benda tajam'),
@@ -846,7 +870,6 @@ INSERT INTO `parameter` (`id_parameter`, `id_kategori`, `id_posisi`, `id_fisik`,
 (378, 67, NULL, 1, NULL, 'Tanda-tanda pada mesin ATM (huruf pada tombol-tombol) dalam kondisi baik'),
 (379, 67, NULL, 1, NULL, 'Terdapat informasi jaringan (mis. ATM bersama, ATM Prima)'),
 (380, 67, NULL, 1, NULL, 'Terdapat informasi pecahan uang'),
-(381, 67, NULL, 1, NULL, 'Tersedia bukti transaksi'),
 (382, 68, NULL, 1, NULL, 'Fungsi lampu bekerja dengan baik (Tidak ada lampu yang rusak)'),
 (383, 68, NULL, 1, NULL, 'Pencahayaan banking hall sangat baik (tidak terlalu terang ataupun tidak terlalu gelap)'),
 (384, 69, NULL, 1, NULL, 'Terdapat media promosi/pengumuman dengan menggunakan media akrilik'),
@@ -868,7 +891,64 @@ INSERT INTO `parameter` (`id_parameter`, `id_kategori`, `id_posisi`, `id_fisik`,
 (403, 10, 3, NULL, 'Pria,Wanita', 'Setelah tersambung berapa kali nada tunggu baru telepon diangkat ?'),
 (404, 10, 3, NULL, 'Pria,Wanita', 'Disambungkan kepada petugas bank lainnya, berapa jumlah transfer telepon sampai kepada petugas yang dituju'),
 (405, 76, 2, NULL, 'Pria,Wanita', 'Durasi waktu dalam melayani pembukaan rekening ?'),
-(406, 77, 4, NULL, 'Pria,Wanita', 'Waktu antrian sampai dilayani oleh Teller');
+(406, 77, 4, NULL, 'Pria,Wanita', 'Waktu antrian sampai dilayani oleh Teller'),
+(407, 78, NULL, 2, NULL, 'Dinding terlihat bersih secara keseluruhan'),
+(408, 78, NULL, 2, NULL, 'Tidak ada kotoran /coretan/cat terkelupas'),
+(409, 78, NULL, 2, NULL, 'Warna dinding terlihat cerah'),
+(410, 79, NULL, 2, NULL, 'Terlihat bersih dan mengkilap'),
+(411, 79, NULL, 2, NULL, 'Tidak ada bekas kotoran yang menempel'),
+(412, 79, NULL, 2, NULL, 'Tidak ada goresan pada kaca akibat benda tumpul/benda tajam'),
+(413, 80, NULL, 2, NULL, 'Lantai Terlihat bersih mengkilap'),
+(414, 80, NULL, 2, NULL, 'Lantai tidak berdebu'),
+(415, 80, NULL, 2, NULL, 'Tidak ada kotoran/kertas/sampah yang berserakan'),
+(416, 81, NULL, 2, NULL, 'Fungsi lampu bekerja dengan baik (Tidak ada lampu yang rusak)'),
+(417, 81, NULL, 2, NULL, 'Pencahayaan banking hall sangat baik (tidak terlalu terang ataupun tidak terlalu gelap)'),
+(418, 82, NULL, 2, NULL, 'Cat tidak terkelupas'),
+(419, 82, NULL, 2, NULL, 'Secara keseluruhan plafond terlihat bersih'),
+(420, 82, NULL, 2, NULL, 'Tidak ada debu yang menempel pada plafond'),
+(421, 82, NULL, 2, NULL, 'Tidak ada sarang laba-laba yang menempel pada plafond'),
+(422, 83, NULL, 2, NULL, 'Suhu ruangan terasa sejuk (AC berfungsi dengan baik)'),
+(423, 83, NULL, 2, NULL, 'Udara terasa bersih tidak ada debu di sekitar ruangan'),
+(424, 84, NULL, 2, NULL, 'Jumlah tanaman di area banking hall serasi/pas'),
+(425, 84, NULL, 2, NULL, 'Jumlah tanaman diatas meja serasi/pas'),
+(426, 84, NULL, 2, NULL, 'Kondisi tanaman di area banking hall terawat dengan baik'),
+(427, 84, NULL, 2, NULL, 'Kondisi tanaman diatas meja terawat dengan baik'),
+(428, 85, NULL, 2, NULL, 'Terdapat di masing-masing meja teller atau di sekitar area teller'),
+(429, 85, NULL, 2, NULL, 'Terdapat di masing-masing meja AE atau di sekitar area AE'),
+(430, 85, NULL, 2, NULL, 'Terdapat di masing-masing meja CS atau di sekitar area CS'),
+(431, 85, NULL, 2, NULL, 'Terdapat tanaman di area dalam banking hall'),
+(432, 85, NULL, 2, NULL, 'Terdapat tanaman di luar pintu masuk banking hall'),
+(433, 86, NULL, 3, NULL, 'Cat dinding masih baik'),
+(434, 86, NULL, 3, NULL, 'Dinding tidak bernoda'),
+(435, 86, NULL, 3, NULL, 'Dinding tidak kotor'),
+(436, 86, NULL, 3, NULL, 'Dinding tidak rusak'),
+(437, 87, NULL, 3, NULL, 'Mudah dilihat'),
+(438, 87, NULL, 3, NULL, 'Terdapat 2 sign (neon sign atm dan neon sign di gedung)'),
+(439, 87, NULL, 3, NULL, 'Terlihat bersih'),
+(440, 87, NULL, 3, NULL, 'Tidak rusak'),
+(441, 88, NULL, 3, NULL, 'Area parkir bersih'),
+(442, 88, NULL, 3, NULL, 'Area parkir kering'),
+(443, 88, NULL, 3, NULL, 'Area parkir tidak berlumut'),
+(444, 88, NULL, 3, NULL, 'Kendaraan tersusun dengan rapih'),
+(445, 89, NULL, 3, NULL, 'Apakah terdapat keset berwarna merah dengan lebar minimal sama dengan depan pintu masuk banking hall di kantor pelayanan bank bjb syariah'),
+(446, 90, NULL, 3, NULL, 'Apakah terdapat neon sign bank bjb syariah di depan kantor pelayanan bank bjb syariah'),
+(447, 91, NULL, 3, NULL, 'Apakah terdapat tempat parkir di kantor pelayanan bank bjb syariah'),
+(448, 92, NULL, 5, NULL, 'Apakah terdapat keset berwarna merah dengan lebar minimal sama dengan depan pintu masuk banking hall di kantor pelayanan bank bjb syariah'),
+(449, 92, NULL, 5, NULL, 'Cat dinding masih baik'),
+(450, 92, NULL, 5, NULL, 'Dinding tidak bernoda'),
+(451, 92, NULL, 5, NULL, 'Dinding tidak kotor'),
+(452, 92, NULL, 5, NULL, 'Dinding tidak rusak'),
+(453, 93, NULL, 5, NULL, 'Area parkir bersih'),
+(454, 93, NULL, 5, NULL, 'Area parkir kering'),
+(455, 93, NULL, 5, NULL, 'Area parkir tidak berlumut'),
+(456, 93, NULL, 5, NULL, 'Kendaraan tersusun dengan rapih'),
+(457, 94, NULL, 5, NULL, 'Apakah terdapat neon sign bank bjb syariah di depan kantor pelayanan bank bjb syariah'),
+(458, 94, NULL, 5, NULL, 'Apakah terdapat tempat parkir di kantor pelayanan bank bjb syariah'),
+(459, 94, NULL, 5, NULL, 'Mudah dilihat'),
+(460, 94, NULL, 5, NULL, 'Terdapat 2 sign (neon sign atm dan neon sign di gedung)'),
+(461, 94, NULL, 5, NULL, 'Terlihat bersih'),
+(462, 94, NULL, 5, NULL, 'Tidak rusak'),
+(463, 95, NULL, 1, NULL, 'Pertanyaan MCOA 1');
 
 -- --------------------------------------------------------
 
@@ -934,7 +1014,148 @@ CREATE TABLE `report_kcp` (
 --
 
 INSERT INTO `report_kcp` (`id`, `id_kcp`, `id_daftar_laporan`, `index_nilai`, `user_id`) VALUES
-(1, 1, 4, '91', 1);
+(1, 1, 4, '91', 1),
+(2, 2, 4, '85', 1),
+(3, 3, 4, '80', 1),
+(4, 4, 4, '75', 1),
+(5, 5, 4, '70', 1),
+(6, 6, 4, '65', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `report_mcoa_kategori`
+--
+
+DROP TABLE IF EXISTS `report_mcoa_kategori`;
+CREATE TABLE `report_mcoa_kategori` (
+  `id` int(11) NOT NULL,
+  `id_laporan_staff_or_fisik` int(11) UNSIGNED DEFAULT NULL,
+  `kategori_id` int(11) UNSIGNED DEFAULT NULL,
+  `mcoa_id` int(11) UNSIGNED DEFAULT NULL,
+  `jawaban` varchar(255) NOT NULL,
+  `komentar` varchar(255) NOT NULL,
+  `id_kunjungan` int(11) UNSIGNED NOT NULL,
+  `user_id` int(11) UNSIGNED NOT NULL,
+  `created_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `report_mcoa_kategori`
+--
+
+INSERT INTO `report_mcoa_kategori` (`id`, `id_laporan_staff_or_fisik`, `kategori_id`, `mcoa_id`, `jawaban`, `komentar`, `id_kunjungan`, `user_id`, `created_at`) VALUES
+(1, 24, 367, NULL, 'Ya', 'Yaa', 4, 1, '2016-11-23 00:00:00'),
+(2, 24, 368, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(3, 24, 369, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(4, 24, 370, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(5, 24, 371, NULL, 'Tidak', 'Tidak', 4, 1, '2016-11-23 00:00:00'),
+(6, 24, 372, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(7, 24, 373, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(8, 24, 374, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(9, 24, 375, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(10, 24, 376, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(11, 24, 377, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(12, 24, 378, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(13, 24, 379, NULL, 'Ya', 'Yaa', 4, 1, '2016-11-23 00:00:00'),
+(14, 24, 380, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(15, 24, 381, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(16, 24, 382, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(17, 24, 383, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(18, 24, 384, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(19, 24, 385, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(20, 24, 386, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(21, 24, 387, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(22, 24, 388, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(23, 24, 389, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(24, 24, 390, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(25, 24, 391, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(26, 24, 392, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(27, 24, 393, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(28, 24, 394, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(29, 24, 395, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(30, 24, 396, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(31, 24, 397, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(32, 24, 398, NULL, 'Ya', 'Oke lah', 4, 1, '2016-11-23 00:00:00'),
+(33, 24, NULL, 463, '40', '', 4, 1, '2016-11-23 00:00:00'),
+(34, 25, 407, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(35, 25, 408, NULL, 'Ya', 'Fix', 4, 1, '2016-11-23 00:00:00'),
+(36, 25, 409, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(37, 25, 410, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(38, 25, 411, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(39, 25, 412, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(40, 25, 413, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(41, 25, 414, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(42, 25, 415, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(43, 25, 416, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(44, 25, 417, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(45, 25, 418, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(46, 25, 419, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(47, 25, 420, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(48, 25, 421, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(49, 25, 422, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(50, 25, 423, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(51, 25, 424, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(52, 25, 425, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(53, 25, 426, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(54, 25, 427, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(55, 25, 428, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(56, 25, 429, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(57, 25, 430, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(58, 25, 431, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(59, 25, 432, NULL, 'Ya', 'Oke', 4, 1, '2016-11-23 00:00:00'),
+(60, 26, 26, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(61, 26, 27, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(62, 26, 28, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(63, 26, 29, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(64, 26, 30, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(65, 26, 31, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(66, 26, 32, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(67, 26, 33, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(68, 26, 34, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(69, 26, 35, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(70, 26, 36, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(71, 26, 37, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(72, 26, 38, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(73, 26, 219, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(74, 26, 220, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(75, 26, 221, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(76, 26, 222, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(77, 26, 223, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(78, 26, 224, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(79, 26, 225, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(80, 26, 226, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(81, 26, 227, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(82, 26, 228, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(83, 26, 229, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(84, 26, 230, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(85, 26, 231, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(86, 26, 232, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(87, 26, 233, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(88, 26, 234, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(89, 26, 235, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(90, 26, 236, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(91, 26, 237, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(92, 26, 238, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(93, 26, 239, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(94, 26, 240, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(95, 26, 241, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(96, 26, 242, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(97, 26, 243, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(98, 26, 244, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(99, 26, 245, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(100, 26, 246, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(101, 26, 247, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(102, 26, 248, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(103, 26, 249, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(104, 26, 250, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(105, 26, 251, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(106, 26, 252, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(107, 26, 253, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(108, 26, 254, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(109, 26, 255, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(110, 26, 256, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00'),
+(111, 26, 257, NULL, 'N/A', '', 4, 1, '2016-11-23 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -994,7 +1215,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `ip_address`, `username`, `password`, `salt`, `email`, `activation_code`, `forgotten_password_code`, `forgotten_password_time`, `remember_code`, `created_on`, `last_login`, `active`, `first_name`, `last_name`, `company`, `phone`) VALUES
-(1, '127.0.0.1', 'administrator', '$2a$07$SeBknntpZror9uyftVopmu61qg0ms8Qv1yV6FG.kQOSM.9QhmTo36', '', 'admin@admin.com', '', NULL, NULL, NULL, 1268889823, 1476808067, 1, 'Admin', 'istrator', 'ADMIN', '0');
+(1, '127.0.0.1', 'administrator', '$2a$07$SeBknntpZror9uyftVopmu61qg0ms8Qv1yV6FG.kQOSM.9QhmTo36', '', 'admin@admin.com', '', NULL, NULL, NULL, 1268889823, 1480244233, 1, 'Admin', 'istrator', 'ADMIN', '0');
 
 -- --------------------------------------------------------
 
@@ -1041,7 +1262,8 @@ ALTER TABLE `detail_laporan`
   ADD PRIMARY KEY (`id`),
   ADD KEY `id_laporan_staff` (`id_laporan_staff`),
   ADD KEY `id_paramater` (`id_paramater`),
-  ADD KEY `user_id` (`user_id`);
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `pilihan_mcoa` (`pilihan_mcoa`);
 
 --
 -- Indexes for table `detail_parameter`
@@ -1056,7 +1278,8 @@ ALTER TABLE `detail_parameter`
 ALTER TABLE `file_report_kcp`
   ADD PRIMARY KEY (`id`),
   ADD KEY `id_report_kcp` (`id_report_kcp`),
-  ADD KEY `user_id` (`user_id`);
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `id_laporan_staff_fisik` (`id_laporan_staff_fisik`);
 
 --
 -- Indexes for table `fisik`
@@ -1170,6 +1393,17 @@ ALTER TABLE `report_kcp`
   ADD KEY `id_daftar_laporan` (`id_daftar_laporan`);
 
 --
+-- Indexes for table `report_mcoa_kategori`
+--
+ALTER TABLE `report_mcoa_kategori`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `mcoa_kategori_id` (`kategori_id`),
+  ADD KEY `id_kunjungan` (`id_kunjungan`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `mcoa_id` (`mcoa_id`),
+  ADD KEY `id_laporan_staff_or_fisik` (`id_laporan_staff_or_fisik`);
+
+--
 -- Indexes for table `staff`
 --
 ALTER TABLE `staff`
@@ -1205,7 +1439,7 @@ ALTER TABLE `cabang`
 -- AUTO_INCREMENT for table `daftar_laporan`
 --
 ALTER TABLE `daftar_laporan`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT for table `detail_laporan`
 --
@@ -1215,12 +1449,12 @@ ALTER TABLE `detail_laporan`
 -- AUTO_INCREMENT for table `detail_parameter`
 --
 ALTER TABLE `detail_parameter`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 --
 -- AUTO_INCREMENT for table `file_report_kcp`
 --
 ALTER TABLE `file_report_kcp`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT for table `fisik`
 --
@@ -1230,7 +1464,7 @@ ALTER TABLE `fisik`
 -- AUTO_INCREMENT for table `fisik_kcp`
 --
 ALTER TABLE `fisik_kcp`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 --
 -- AUTO_INCREMENT for table `gender`
 --
@@ -1260,7 +1494,7 @@ ALTER TABLE `kcp`
 -- AUTO_INCREMENT for table `laporan_staff_or_fisik`
 --
 ALTER TABLE `laporan_staff_or_fisik`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 --
 -- AUTO_INCREMENT for table `login_attempts`
 --
@@ -1270,7 +1504,7 @@ ALTER TABLE `login_attempts`
 -- AUTO_INCREMENT for table `mcoa_kategori`
 --
 ALTER TABLE `mcoa_kategori`
-  MODIFY `id_kategori` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
+  MODIFY `id_kategori` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=96;
 --
 -- AUTO_INCREMENT for table `menu`
 --
@@ -1280,7 +1514,7 @@ ALTER TABLE `menu`
 -- AUTO_INCREMENT for table `parameter`
 --
 ALTER TABLE `parameter`
-  MODIFY `id_parameter` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=407;
+  MODIFY `id_parameter` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=464;
 --
 -- AUTO_INCREMENT for table `pengguna`
 --
@@ -1295,7 +1529,12 @@ ALTER TABLE `posisi`
 -- AUTO_INCREMENT for table `report_kcp`
 --
 ALTER TABLE `report_kcp`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+--
+-- AUTO_INCREMENT for table `report_mcoa_kategori`
+--
+ALTER TABLE `report_mcoa_kategori`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=112;
 --
 -- AUTO_INCREMENT for table `staff`
 --
@@ -1328,7 +1567,8 @@ ALTER TABLE `detail_laporan`
   ADD CONSTRAINT `f_lap_staff` FOREIGN KEY (`id_laporan_staff`) REFERENCES `laporan_staff_or_fisik` (`id`),
   ADD CONSTRAINT `f_pmp` FOREIGN KEY (`id_paramater`) REFERENCES `parameter` (`id_parameter`),
   ADD CONSTRAINT `f_usr` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
-  ADD CONSTRAINT `id_userr` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+  ADD CONSTRAINT `id_userr` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  ADD CONSTRAINT `pil_mcoa` FOREIGN KEY (`pilihan_mcoa`) REFERENCES `detail_parameter` (`id`);
 
 --
 -- Constraints for table `detail_parameter`
@@ -1341,6 +1581,7 @@ ALTER TABLE `detail_parameter`
 --
 ALTER TABLE `file_report_kcp`
   ADD CONSTRAINT `f_report_kcp` FOREIGN KEY (`id_report_kcp`) REFERENCES `report_kcp` (`id`),
+  ADD CONSTRAINT `f_staff_fisik` FOREIGN KEY (`id_laporan_staff_fisik`) REFERENCES `laporan_staff_or_fisik` (`id`),
   ADD CONSTRAINT `f_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
 --
@@ -1394,6 +1635,12 @@ ALTER TABLE `report_kcp`
   ADD CONSTRAINT `asd` FOREIGN KEY (`id_daftar_laporan`) REFERENCES `daftar_laporan` (`id`),
   ADD CONSTRAINT `fkckp` FOREIGN KEY (`id_kcp`) REFERENCES `kcp` (`id_kcp`),
   ADD CONSTRAINT `fkckpsd` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+
+--
+-- Constraints for table `report_mcoa_kategori`
+--
+ALTER TABLE `report_mcoa_kategori`
+  ADD CONSTRAINT `id_lap_staf_or_fisik` FOREIGN KEY (`id_laporan_staff_or_fisik`) REFERENCES `laporan_staff_or_fisik` (`id`);
 
 --
 -- Constraints for table `staff`

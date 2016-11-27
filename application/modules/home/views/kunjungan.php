@@ -73,7 +73,7 @@
                     </li>
 
                     <li>
-                        <a href="#top-kcp-posisi" data-target="#top-kcp-posisi" data-ajax="http://ms-bjbsyariah.com/ajax/list_kcp_posisi" data-toggle="tab">
+                        <a href="#top-kcp-posisi" ng-click="get_top_posisi()" data-target="#top-kcp-posisi" data-toggle="tab">
                             10 Jaringan Teratas Per Posisi
                         </a>
                     </li>
@@ -111,148 +111,63 @@
 
                 <div class="tab-content home-tabs">
                     <div class="tab-pane active fade in" id="top-kcp">
-    <div class="row list-dealer">
-                                    <div>
-                                            <a href="http://ms-bjbsyariah.com/cabang/64/kcp/375">
-                            <span class="rank">
-                                1                            </span>
-
-                            <span class="mrg-top-10">
-                                 KCP Tambun                             </span>
-
-                            <span>
-                                Jl. Sultan Hasanudin No. 5 Kabupaten Bekasi, Jawa Barat                            </span>
-                        </a>
-                                    </div>
-                            <div>
-                                            <a href="http://ms-bjbsyariah.com/cabang/61/kcp/352">
-                            <span class="rank">
-                                2                            </span>
-
-                            <span class="mrg-top-10">
-                                 KCP Pabuaran                             </span>
-
-                            <span>
-                                Jl. Raya Pabuaran Wetan No.12, Kec. Ciledug, Kab. Cirebon                            </span>
-                        </a>
-                                    </div>
-                            <div>
-                                            <a href="http://ms-bjbsyariah.com/cabang/66/kcp/392">
-                            <span class="rank">
-                                3                            </span>
-
-                            <span class="mrg-top-10">
-                                KCP Sukajadi                            </span>
-
-                            <span>
-                                Jl. Sukajadi No.70 Kota Bandung, Jawa Barat
-                            </span>
-                        </a>
-                                    </div>
-                            <div>
-                                            <a href="http://ms-bjbsyariah.com/cabang/60/kcp/339">
-                            <span class="rank">
-                                4                            </span>
-
-                            <span class="mrg-top-10">
-                                 KCP Singaparna                             </span>
-
-                            <span>
-                                Jl. Raya Timur No.  36 Cikiray Singaparna Kab. Tasikmalaya, Jawa Barat                            </span>
-                        </a>
-                                    </div>
-                            <div>
-                                            <a href="http://ms-bjbsyariah.com/cabang/60/kcp/340">
-                            <span class="rank">
-                                5                            </span>
-
-                            <span class="mrg-top-10">
-                                 KCP Bantarkalong                             </span>
-
-                            <span>
-                                Jl. Raya Simpang RT/RW. 07/04 Desa Simpang Kec. Bantarkalong Kab. Tasikmalaya, Jawa Barat                            </span>
-                        </a>
-                                    </div>
-                            <div>
-                                            <a href="http://ms-bjbsyariah.com/cabang/63/kcp/367">
-                            <span class="rank">
-                                6                            </span>
-
-                            <span class="mrg-top-10">
-                                 KCP Ciputat                             </span>
-
-                            <span>
-                                Jl. Ir. H. Juanda No.117 Ciputat Kota Tangerang Selatan, Banten                            </span>
-                        </a>
-                                    </div>
-                            <div>
-                                            <a href="http://ms-bjbsyariah.com/cabang/65/kcp/378">
-                            <span class="rank">
-                                7                            </span>
-
-                            <span class="mrg-top-10">
-                                 KC Soepomo                            </span>
-
-                            <span>
-                                Menara Bidakara 2 Jl. Gatot Subroto Kav. 71-73 Jakarta Selatan, DKI Jakarta                            </span>
-                        </a>
-                                    </div>
-                            <div>
-                                            <a href="http://ms-bjbsyariah.com/cabang/60/kcp/341">
-                            <span class="rank">
-                                8                            </span>
-
-                            <span class="mrg-top-10">
-                                 KCP Ciawi                             </span>
-
-                            <span>
-                                Jl. Pelita 1 Pasar Baru Ciawi RT/RW. 02/08 Desa Pakemitan Kec. Ciawi Kab. Tasikmalaya, Jawa Barat                            </span>
-                        </a>
-                                    </div>
-                            <div>
-                                            <a href="http://ms-bjbsyariah.com/cabang/63/kcp/364">
-                            <span class="rank">
-                                9                            </span>
-
-                            <span class="mrg-top-10">
-                                 KCP Pandeglang                             </span>
-
-                            <span>
-                                Jl. Raya Serang Km.01 No. 15A Kab. Pandeglang, Banten                            </span>
-                        </a>
-                                    </div>
-                            <div>
-                                            <a href="http://ms-bjbsyariah.com/cabang/66/kcp/389">
-                            <span class="rank">
-                                10                            </span>
-
-                            <span class="mrg-top-10">
-                                 KCP Lembang                             </span>
-
-                            <span>
-                                Jl. Raya Lembang No. 374 A-B Lembang Kab. Bandung Barat, Jawa Barat                            </span>
-                        </a>
-                                    </div>
+                        <div class="row list-dealer">
+                            <div ng-repeat="cabang in cabangs">
+                                <a href="http://ms-bjbsyariah.com/cabang/64/kcp/375">
+                                    <span class="rank">{{$index+1}}</span>
+                                    <span class="mrg-top-10">
+                                        {{cabang.nama_kcp}}                             
+                                    </span>
+                                    <span>
+                                        {{cabang.alamat_kcp}}                            
+                                    </span>
+                                </a>
+                            </div>
                         </div>
-</div>
+                    </div>
                     <div class="tab-pane fade" id="top-kcp-posisi">
-    <div class="loader">Loading...</div>
-</div>
+                        <div class="nav-tabs-custom">
+                            <ul class="nav nav-tabs">
+                                <li ng-repeat="posisi in posisis" class="{{posisi.class}}">
+                                    <a class="link-top-kcp-posisi" href="#top-kcp-posisi-1" ng-click="top_kcp_posisi(posisi.id)" data-toggle="tab"> {{posisi.nama_posisi}}</a>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content" id="top-kcp-posisi-tab-content">
+                                <div class="tab-pane fade active in" id="top-kcp-posisi-1">
+                                    <div class="row list-dealer">
+                                        <div ng-repeat="p in topPosisi">
+                                            <a href="http://ms-bjbsyariah.com/cabang/66/kcp/382">
+                                                <span class="rank">{{$index+1}}</span>
+                                                <span class="mrg-top-10">
+                                                    {{p.nama_kcp}}              
+                                                </span>
+                                                <span>
+                                                    {{p.alamat_kcp}}                        
+                                                </span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="tab-pane fade" id="top-cabang">
-    <div class="loader">Loading...</div>
-</div>
+                        <div class="loader">Loading...</div>
+                    </div>
                     <div class="tab-pane fade" id="kcp-by-cabang">
-    <div class="loader">Loading...</div>
-</div>
+                        <div class="loader">Loading...</div>
+                    </div>
                     <div class="tab-pane fade" id="list-kcp">
-    <div class="loader">Loading...</div>
-</div>
+                        <div class="loader">Loading...</div>
+                    </div>
                     <div class="tab-pane fade" id="list-staff">
-    <div class="loader">Loading...</div>
-</div>
+                        <div class="loader">Loading...</div>
+                    </div>
                     <div class="tab-pane fade" id="list-fisik">
-    <div class="loader">Loading...</div>
-</div>                </div>
+                        <div class="loader">Loading...</div>
+                    </div>                
+                </div>
             </div>
         </div>
 

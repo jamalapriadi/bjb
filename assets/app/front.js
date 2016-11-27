@@ -1,4 +1,4 @@
-var frontApp=angular.module('frontApp',['frontController','frontService','ngLoadingSpinner','ngAnimate','ngResource','ui.select2','ngFileUpload','ngSanitize','daterangepicker'])
+var frontApp=angular.module('frontApp',['frontController','frontService'])
 
 frontApp.filter('_uriseg', function($location) {
   return function(segment) {
